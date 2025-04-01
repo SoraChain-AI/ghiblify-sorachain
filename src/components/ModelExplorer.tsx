@@ -11,6 +11,19 @@ const ModelExplorer = () => {
   const [globalImprovement, setGlobalImprovement] = useState(0);
   const { toast } = useToast();
   
+  // List of countries for random selection
+  const countries = [
+    "Japan", "USA", "France", "Brazil", "Australia",
+    "Canada", "Germany", "India", "UK", "South Korea",
+    "Italy", "Spain", "Mexico", "Sweden", "Netherlands",
+    "Russia", "China", "South Africa", "Egypt", "Argentina"
+  ];
+
+  // Function to get a random country
+  const getRandomCountry = () => {
+    return countries[Math.floor(Math.random() * countries.length)];
+  };
+  
   useEffect(() => {
     // Initialize with some mock nodes
     setNodes(generateMockNodes(15));
@@ -37,12 +50,14 @@ const ModelExplorer = () => {
       // Update global improvement
       setGlobalImprovement(prev => prev + improvement * 0.1);
       
-      // Show a toast for the contribution
-      const randomNode = nodes[randomNodeIndex];
-      setActiveNode(randomNode?.id || null);
+      // Get a random country for the notification
+      const randomCountry = getRandomCountry();
+      
+      // Show a toast for the contribution with the random country
+      setActiveNode(nodes[randomNodeIndex]?.id || null);
       
       toast({
-        title: `New contribution from ${randomNode?.location} 🌍`,
+        title: `New contribution from ${randomCountry} 🌍`,
         description: `Model improved globally by ${improvement.toFixed(2)}%`,
       });
       
