@@ -78,7 +78,7 @@ const ResultDisplay = ({
       </div>
       
       <div className="bg-black bg-opacity-5 rounded-lg overflow-hidden mb-6">
-        {/* Image removed as requested */}
+        <img src={displayedImage} alt="Ghiblified Image" className="w-full h-auto object-cover" />
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
