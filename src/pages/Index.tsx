@@ -63,7 +63,7 @@ const Index = () => {
                 <div className="text-left">
                   <h3 className="font-medium">Earn While You Create</h3>
                   <p className="text-sm text-muted-foreground">
-                    Get SoraTokens for AI contributions
+                    Get $SORA for AI contributions
                   </p>
                 </div>
               </div>

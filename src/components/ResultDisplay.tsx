@@ -19,6 +19,7 @@ const ResultDisplay = ({
   const {
     toast
   } = useToast();
+  
   const handleDownload = () => {
     // In a real app, this would download the image
     const link = document.createElement('a');
@@ -32,6 +33,7 @@ const ResultDisplay = ({
       description: "Your Ghiblified image has been saved to your device."
     });
   };
+  
   const handleShare = () => {
     // In a real app, this would open a share dialog
     toast({
@@ -39,6 +41,7 @@ const ResultDisplay = ({
       description: "Sharing functionality would be implemented here."
     });
   };
+  
   const handleClaimRewards = () => {
     setClaimingReward(true);
 
@@ -47,7 +50,7 @@ const ResultDisplay = ({
       setClaimingReward(false);
       toast({
         title: "Rewards claimed!",
-        description: "20 SoraTokens have been added to your wallet."
+        description: "20 $SORA have been added to your wallet."
       });
 
       // Navigate to dashboard after claiming
@@ -56,6 +59,7 @@ const ResultDisplay = ({
       }, 1500);
     }, 2000);
   };
+  
   return <div className="ghibli-card w-full max-w-2xl p-6 md:p-8 animate-scale-up">
       <div className="text-center mb-6">
         <div className="inline-block p-2 bg-ghibli-green bg-opacity-30 rounded-full mb-3">

@@ -35,8 +35,8 @@ const Dashboard = ({ user }: DashboardProps) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <DashboardCard 
           title="Token Balance" 
-          value={`${user.tokenBalance.toFixed(1)} ST`}
-          description="Your earned SoraTokens"
+          value={`${user.tokenBalance.toFixed(1)} $SORA`}
+          description="Your earned $SORA"
           icon={<Coins className="h-5 w-5" />}
           iconColor="text-ghibli-purple"
           iconBg="bg-ghibli-purple bg-opacity-20"
