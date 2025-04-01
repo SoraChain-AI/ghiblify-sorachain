@@ -27,7 +27,7 @@ const Globe = ({ nodes, activeNode, rotating, setRotating }: GlobeProps) => {
           {/* World Map Image */}
           {!imageError ? (
             <img 
-              src="https://i.imgur.com/qkdqGPX.png" 
+              src="https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/sign/ghibli/75a94a063ab2fecf5e3f64abd90e6190.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJnaGlibGkvNzVhOTRhMDYzYWIyZmVjZjVlM2Y2NGFiZDkwZTYxOTAuanBnIiwiaWF0IjoxNzQzNTE2MjU4LCJleHAiOjE3NzUwNTIyNTh9.D9Dkoi0cA1ic7IgX7isq0YthuGejXgiwgXKkKvA-PfY" 
               alt="World Map"
               className="w-full h-full object-cover"
               onError={() => setImageError(true)} 
