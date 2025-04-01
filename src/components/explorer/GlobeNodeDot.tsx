@@ -29,14 +29,14 @@ const GlobeNodeDot = ({
   const longitude = node.longitude || 0;
   const latitude = node.latitude || 0;
 
-  // Update the positioning calculation
-  // Map longitude from -180..180 to 10..90% of the container width
-  // This avoids dots being placed too close to the edges
-  const x = ((longitude + 180) / 360) * 80 + 10;
+  // Improved positioning calculation with better spread
+  // Map longitude from -180..180 to 5..95% of the container width
+  // This gives a wider distribution of dots
+  const x = ((longitude + 180) / 360) * 90 + 5;
 
-  // Map latitude from -90..90 to 10..90% of the container height
+  // Map latitude from -90..90 to 5..95% of the container height
   // Also invert it because the y-axis is inverted in CSS (0 is at the top)
-  const y = ((90 - latitude) / 180) * 80 + 10;
+  const y = ((90 - latitude) / 180) * 90 + 5;
 
   // Size based on improvement (made larger for better visibility)
   const size = 8 + node.improvement * 15;
@@ -59,11 +59,13 @@ const GlobeNodeDot = ({
               top: `${y}%`,
               width: `${size}px`,
               height: `${size}px`,
-              backgroundColor: isRecent ? '#FEF7CD' : '#FFEB3B',
+              backgroundColor: isRecent ? '#A6D9C7' : '#5E9E8F', // Using ghibli-green and ghibli-dark-green
               borderRadius: '50%',
               borderColor: isActive ? 'white' : 'transparent',
               borderWidth: isActive ? '2px' : '0',
-              boxShadow: isActive ? '0 0 0 4px rgba(255, 235, 59, 0.3), 0 0 20px rgba(255, 235, 59, 0.8)' : '0 0 10px rgba(255, 255, 0, 0.9), 0 0 15px rgba(255, 235, 59, 0.5) inset',
+              boxShadow: isActive ? 
+                '0 0 0 4px rgba(94, 158, 143, 0.3), 0 0 20px rgba(94, 158, 143, 0.8)' : 
+                '0 0 10px rgba(94, 158, 143, 0.9), 0 0 15px rgba(166, 217, 199, 0.5) inset',
               transform: `${isActive ? 'scale(1.5)' : 'scale(1)'} ${rotating ? rotationOffset : ''}`,
               zIndex: isActive ? 20 : 10,
               transition: 'all 0.3s ease-in-out',

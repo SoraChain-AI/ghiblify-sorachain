@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Info } from "lucide-react";
 import { ModelNode } from "@/lib/types";
@@ -27,7 +28,7 @@ const Globe = ({
                 <p className="text-blue-600">World Map Image Failed to Load</p>
               </div>}
 
-            <div className="absolute top-0 right-0 m-2 text-xs text-white bg-blue-500 px-2 py-1 rounded-full shadow-md">
+            <div className="absolute top-0 right-0 m-2 text-xs text-white bg-ghibli-dark-green px-2 py-1 rounded-full shadow-md">
               Click to {rotating ? 'pause' : 'animate'} dots
             </div>
           </div>
@@ -42,7 +43,7 @@ const Globe = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <button className="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-md border border-gray-200">
-                  <Info className="h-4 w-4 text-primary" />
+                  <Info className="h-4 w-4 text-ghibli-dark-green" />
                 </button>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
@@ -64,7 +65,7 @@ const Globe = ({
       
       {/* Moved from inside the globe to below it */}
       <div className="text-sm text-muted-foreground text-center">
-        Each dot represents an anonymous device contributing to the model. 
+        Each green dot represents an anonymous device contributing to the model. 
         Your data never leaves your device.
       </div>
     </div>;

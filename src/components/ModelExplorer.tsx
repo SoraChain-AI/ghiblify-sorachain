@@ -13,17 +13,23 @@ const ModelExplorer = () => {
   const [rotating, setRotating] = useState(true);
   
   useEffect(() => {
-    // Initialize with some mock nodes
-    const initialNodes = generateMockNodes(15);
+    // Initialize with more mock nodes for better distribution
+    const initialNodes = generateMockNodes(25);
     
     // Assign actual coordinates based on location names
+    // Add some random offset to prevent overlapping
     const nodesWithCoordinates = initialNodes.map(node => {
       const country = node.location;
       const coordinates = countryCoordinates[country] || [0, 0];
+      
+      // Add small random offsets to longitude and latitude for better distribution
+      const longitudeOffset = (Math.random() - 0.5) * 10; // +/- 5 degrees
+      const latitudeOffset = (Math.random() - 0.5) * 10;  // +/- 5 degrees
+      
       return {
         ...node,
-        longitude: coordinates[0],
-        latitude: coordinates[1]
+        longitude: coordinates[0] + longitudeOffset,
+        latitude: coordinates[1] + latitudeOffset
       };
     });
     
@@ -34,12 +40,16 @@ const ModelExplorer = () => {
     
     // Simulate new contributions coming in
     const interval = setInterval(() => {
-      const randomNodeIndex = Math.floor(Math.random() * 15);
+      const randomNodeIndex = Math.floor(Math.random() * 25);
       const improvement = Math.random() * 0.3;
       
       // Get a random country for the notification
       const randomCountry = getRandomCountry();
       const coordinates = countryCoordinates[randomCountry] || [0, 0];
+      
+      // Add random offset for the new node as well
+      const longitudeOffset = (Math.random() - 0.5) * 10;
+      const latitudeOffset = (Math.random() - 0.5) * 10;
       
       // Update the node
       setNodes(prev => {
@@ -49,8 +59,8 @@ const ModelExplorer = () => {
           lastContribution: new Date(),
           improvement: improvement,
           location: randomCountry,
-          longitude: coordinates[0],
-          latitude: coordinates[1]
+          longitude: coordinates[0] + longitudeOffset,
+          latitude: coordinates[1] + latitudeOffset
         };
         return newNodes;
       });
