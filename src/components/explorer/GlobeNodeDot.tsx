@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ModelNode } from "@/lib/types";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -18,6 +19,7 @@ export const formatTime = (date: Date): string => {
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
   return `${Math.floor(diffInSeconds / 86400)} days ago`;
 };
+
 const GlobeNodeDot = ({
   node,
   isActive,
@@ -27,17 +29,14 @@ const GlobeNodeDot = ({
   const longitude = node.longitude || 0;
   const latitude = node.latitude || 0;
 
-  // Convert longitude and latitude to positions on the map
-  // For a flat map, we use a simple Mercator-like projection
-  const containerWidth = 100; // This is a percentage of container width
-  const containerHeight = 100; // This is a percentage of container height
+  // Update the positioning calculation
+  // Map longitude from -180..180 to 10..90% of the container width
+  // This avoids dots being placed too close to the edges
+  const x = ((longitude + 180) / 360) * 80 + 10;
 
-  // Map longitude from -180..180 to 0..100% of the container width
-  const x = (longitude + 180) / 360 * containerWidth;
-
-  // Map latitude from -90..90 to 0..100% of the container height
-  // We also invert it because the y-axis is inverted in CSS (0 is at the top)
-  const y = (90 - latitude) / 180 * containerHeight;
+  // Map latitude from -90..90 to 10..90% of the container height
+  // Also invert it because the y-axis is inverted in CSS (0 is at the top)
+  const y = ((90 - latitude) / 180) * 80 + 10;
 
   // Size based on improvement (made larger for better visibility)
   const size = 8 + node.improvement * 15;
@@ -48,21 +47,31 @@ const GlobeNodeDot = ({
 
   // Extra rotation effect for nodes
   const rotationOffset = rotating ? `translateX(${Math.sin(Date.now() / 3000) * 5}px)` : '';
-  return <TooltipProvider>
+  
+  return (
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div style={{
-          left: `${x}%`,
-          top: `${y}%`,
-          width: `${size}px`,
-          height: `${size}px`,
-          backgroundColor: isRecent ? '#FEF7CD' : '#FFEB3B',
-          // Changed to yellow colors
-          borderColor: isActive ? 'white' : 'transparent',
-          boxShadow: isActive ? '0 0 0 4px rgba(255, 235, 59, 0.3), 0 0 20px rgba(255, 235, 59, 0.8)' : '0 0 10px rgba(255, 255, 0, 0.9), 0 0 15px rgba(255, 235, 59, 0.5) inset',
-          transform: `${isActive ? 'scale(1.5)' : 'scale(1)'} ${rotating ? rotationOffset : ''}`,
-          zIndex: isActive ? 20 : 10
-        }} className="bg-slate-400 rounded-md" />
+          <div 
+            style={{
+              position: 'absolute',
+              left: `${x}%`,
+              top: `${y}%`,
+              width: `${size}px`,
+              height: `${size}px`,
+              backgroundColor: isRecent ? '#FEF7CD' : '#FFEB3B',
+              borderRadius: '50%',
+              borderColor: isActive ? 'white' : 'transparent',
+              borderWidth: isActive ? '2px' : '0',
+              boxShadow: isActive ? '0 0 0 4px rgba(255, 235, 59, 0.3), 0 0 20px rgba(255, 235, 59, 0.8)' : '0 0 10px rgba(255, 255, 0, 0.9), 0 0 15px rgba(255, 235, 59, 0.5) inset',
+              transform: `${isActive ? 'scale(1.5)' : 'scale(1)'} ${rotating ? rotationOffset : ''}`,
+              zIndex: isActive ? 20 : 10,
+              transition: 'all 0.3s ease-in-out',
+              pointerEvents: 'all',
+              cursor: 'pointer'
+            }} 
+            className="absolute"
+          />
         </TooltipTrigger>
         <TooltipContent>
           <div className="text-sm">
@@ -72,6 +81,8 @@ const GlobeNodeDot = ({
           </div>
         </TooltipContent>
       </Tooltip>
-    </TooltipProvider>;
+    </TooltipProvider>
+  );
 };
+
 export default GlobeNodeDot;
