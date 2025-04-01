@@ -21,26 +21,21 @@ export const formatTime = (date: Date): string => {
 };
 
 const GlobeNodeDot = ({ node, isActive, rotating }: GlobeNodeDotProps) => {
-  // Calculate position on the globe surface
+  // Calculate position on the flat map
   const longitude = node.longitude || 0;
   const latitude = node.latitude || 0;
   
-  // Convert spherical coordinates to Cartesian coordinates
-  // Note: These are simplified calculations for a 2D representation
-  const radius = 150; // Half of the globe's width/height
-  const centerX = 150; // Center X within the parent container
-  const centerY = 150; // Center Y within the parent container
+  // Convert longitude and latitude to positions on the map
+  // For a flat map, we use a simple Mercator-like projection
+  const containerWidth = 100; // This is a percentage of container width
+  const containerHeight = 100; // This is a percentage of container height
   
-  // Convert latitude and longitude to radians
-  const lat = latitude * Math.PI / 180;
-  const lon = longitude * Math.PI / 180;
+  // Map longitude from -180..180 to 0..100% of the container width
+  const x = ((longitude + 180) / 360) * containerWidth;
   
-  // Calculate position (simplified for 2D front-facing visibility)
-  const x = centerX + radius * Math.cos(lat) * Math.sin(lon) * 0.5;
-  const y = centerY - radius * Math.sin(lat) * 0.5;
-  
-  // Adjust z-index for dots appearing "behind" the globe
-  const zIndex = Math.cos(lat) * Math.cos(lon) > 0 ? 10 : 0;
+  // Map latitude from -90..90 to 0..100% of the container height
+  // We also invert it because the y-axis is inverted in CSS (0 is at the top)
+  const y = ((90 - latitude) / 180) * containerHeight;
   
   // Size based on improvement (made larger for better visibility)
   const size = 8 + (node.improvement * 15);
@@ -51,7 +46,7 @@ const GlobeNodeDot = ({ node, isActive, rotating }: GlobeNodeDotProps) => {
   
   // Extra rotation effect for nodes
   const rotationOffset = rotating ? 
-    `translateX(${Math.sin(Date.now() / 3000) * 10}px)` : '';
+    `translateX(${Math.sin(Date.now() / 3000) * 5}px)` : '';
   
   return (
     <TooltipProvider>
@@ -60,8 +55,8 @@ const GlobeNodeDot = ({ node, isActive, rotating }: GlobeNodeDotProps) => {
           <div 
             className={`absolute rounded-full transition-all duration-300 animate-pulse-gentle border`}
             style={{
-              left: `${x}px`,
-              top: `${y}px`,
+              left: `${x}%`,
+              top: `${y}%`,
               width: `${size}px`,
               height: `${size}px`,
               backgroundColor: isRecent ? '#9b87f5' : '#8FB3DE',
@@ -69,9 +64,8 @@ const GlobeNodeDot = ({ node, isActive, rotating }: GlobeNodeDotProps) => {
               boxShadow: isActive 
                 ? '0 0 0 4px rgba(155, 135, 245, 0.3), 0 0 20px rgba(155, 135, 245, 0.8)' 
                 : '0 0 10px rgba(155, 255, 255, 0.9), 0 0 15px rgba(155, 135, 245, 0.5) inset',
-              transform: isActive ? 'scale(1.5)' : 'scale(1)',
-              zIndex: isActive ? 20 : zIndex,
-              opacity: (Math.cos(lat) * Math.cos(lon) > 0) ? 1 : 0.5,
+              transform: `${isActive ? 'scale(1.5)' : 'scale(1)'} ${rotating ? rotationOffset : ''}`,
+              zIndex: isActive ? 20 : 10
             }}
           />
         </TooltipTrigger>

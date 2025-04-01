@@ -1,10 +1,9 @@
 
 import { useState } from "react";
-import { Globe as GlobeIcon } from "lucide-react";
+import { Info } from "lucide-react";
 import { ModelNode } from "@/lib/types";
 import GlobeNodeDot from "./GlobeNodeDot";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
 
 interface GlobeProps {
   nodes: ModelNode[];
@@ -19,38 +18,33 @@ const Globe = ({ nodes, activeNode, rotating, setRotating }: GlobeProps) => {
 
   return (
     <div className="relative w-full h-[400px] bg-ghibli-cream rounded-lg overflow-hidden border border-ghibli-brown border-opacity-20 p-2">
-      {/* 3D Globe representation */}
+      {/* World Map representation */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div 
-          className={`relative w-[300px] h-[300px] rounded-full bg-gradient-to-b from-blue-200 to-blue-400 border-4 border-blue-300 shadow-xl ${rotating ? 'animate-spin-slow' : ''}`}
-          style={{
-            backgroundImage: !imageError ? "url('https://www.transparentpng.com/thumb/earth/RlGAZi-earth-free-download.png')" : "none",
-            backgroundSize: "cover",
-            backgroundPosition: "center"
-          }}
+          className="relative w-full h-full overflow-hidden"
           onClick={() => setRotating(!rotating)}
         >
-          {/* Fallback image onError */}
-          <img 
-            src="https://www.transparentpng.com/thumb/earth/RlGAZi-earth-free-download.png" 
-            className="hidden"
-            onError={() => setImageError(true)} 
-          />
-
-          <div className="absolute top-0 right-0 m-2 text-xs text-white bg-blue-500 px-2 py-1 rounded-full shadow-md">
-            Click to {rotating ? 'pause' : 'rotate'}
-          </div>
-          
-          {/* Globe icon as a fallback */}
-          {imageError && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <GlobeIcon className="w-full h-full text-blue-400" />
+          {/* World Map Image */}
+          {!imageError ? (
+            <img 
+              src="https://i.imgur.com/qkdqGPX.png" 
+              alt="World Map"
+              className="w-full h-full object-cover"
+              onError={() => setImageError(true)} 
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-blue-100">
+              <p className="text-blue-600">World Map Image Failed to Load</p>
             </div>
           )}
+
+          <div className="absolute top-0 right-0 m-2 text-xs text-white bg-blue-500 px-2 py-1 rounded-full shadow-md">
+            Click to {rotating ? 'pause' : 'animate'} dots
+          </div>
         </div>
       </div>
       
-      {/* Nodes on the globe */}
+      {/* Nodes on the world map */}
       {nodes.map((node) => (
         <GlobeNodeDot 
           key={node.id} 
