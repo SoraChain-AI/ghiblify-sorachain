@@ -18,7 +18,7 @@ const Index = () => {
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               Transform Your <span className="text-ghibli-dark-green">Private</span> Photos Into{" "}
-              <span className="bg-gradient-to-r from-ghibli-dark-blue to-ghibli-purple bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-700 to-purple-800 bg-clip-text text-transparent">
                 Ghibli Art
               </span>
             </h1>
