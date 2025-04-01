@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -77,7 +78,7 @@ const ResultDisplay = ({
       </div>
       
       <div className="bg-black bg-opacity-5 rounded-lg overflow-hidden mb-6">
-        <img src={displayedImage} alt="Ghiblified Image" className="w-full h-auto object-cover" />
+        {/* Image removed as requested */}
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
