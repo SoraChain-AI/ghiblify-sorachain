@@ -11,7 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Coins, ImageIcon, Award, Receipt } from "lucide-react";
-import { User, Contribution, NFT, Royalty, generateMockContributions, generateMockNFTs, generateMockRoyalties } from "@/lib/types";
+import { User, Contribution, NFT, Royalty, generateMockContributions, generateMockRoyalties } from "@/lib/types";
+import { sampleImages, transformedImageMap } from "@/components/sample-images/imageData";
 
 interface DashboardProps {
   user: User;
@@ -19,7 +20,34 @@ interface DashboardProps {
 
 const Dashboard = ({ user }: DashboardProps) => {
   const [contributions] = useState<Contribution[]>(generateMockContributions(user.id, 8));
-  const [nfts] = useState<NFT[]>(generateMockNFTs(user.id, 6));
+  
+  const generateConsistentNFTs = (userId: string): NFT[] => {
+    const nfts: NFT[] = [];
+    
+    sampleImages.forEach((image, index) => {
+      nfts.push({
+        id: `original-${image.id}`,
+        userId,
+        imageUrl: image.url,
+        name: `Original: ${image.name}`,
+        createdAt: new Date(Date.now() - Math.random() * 10000000000)
+      });
+      
+      if (transformedImageMap[image.url]) {
+        nfts.push({
+          id: `transformed-${image.id}`,
+          userId,
+          imageUrl: transformedImageMap[image.url],
+          name: `Transformed: ${image.name}`,
+          createdAt: new Date(Date.now() - Math.random() * 5000000000)
+        });
+      }
+    });
+    
+    return nfts;
+  };
+  
+  const [nfts] = useState<NFT[]>(generateConsistentNFTs(user.id));
   const [royalties] = useState<Royalty[]>(generateMockRoyalties(10));
   
   const chartData = contributions
@@ -120,7 +148,7 @@ const Dashboard = ({ user }: DashboardProps) => {
           <div className="space-y-6">
             <h3 className="text-lg font-medium">Proof of Contribution NFTs</h3>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {nfts.map((nft) => (
                 <div 
                   key={nft.id}
@@ -130,6 +158,10 @@ const Dashboard = ({ user }: DashboardProps) => {
                     src={nft.imageUrl} 
                     alt={nft.name}
                     className="w-full aspect-square object-cover"
+                    onError={(e) => {
+                      console.error(`Failed to load NFT image: ${nft.imageUrl}`);
+                      e.currentTarget.src = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=500&auto=format";
+                    }}
                   />
                   <div className="p-3">
                     <h4 className="font-medium">{nft.name}</h4>
