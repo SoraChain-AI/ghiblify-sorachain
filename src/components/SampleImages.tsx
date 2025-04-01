@@ -27,15 +27,54 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const { data, error } = await supabase
+        // First try to fetch from the sample_images table
+        const { data: dbImages, error: dbError } = await supabase
           .from('sample_images')
           .select('*');
         
-        if (error) {
-          throw error;
+        if (dbError) {
+          throw dbError;
         }
         
-        setImages(data || []);
+        if (dbImages && dbImages.length > 0) {
+          setImages(dbImages);
+        } else {
+          // If no images in the database, try to fetch from storage
+          const { data: storageData, error: storageError } = await supabase
+            .storage
+            .from('sample_images')
+            .list('ghibli', {
+              limit: 10,
+              sortBy: { column: 'name', order: 'asc' },
+            });
+          
+          if (storageError) {
+            throw storageError;
+          }
+          
+          if (storageData && storageData.length > 0) {
+            // Transform storage objects to our SampleImage format
+            const storageImages: SampleImage[] = storageData
+              .filter(item => !item.id.endsWith('/')) // Filter out folders
+              .map(item => {
+                const publicUrl = supabase.storage
+                  .from('sample_images')
+                  .getPublicUrl(`ghibli/${item.name}`).data.publicUrl;
+                
+                return {
+                  id: item.id,
+                  name: item.name.split('.')[0].replace(/_/g, ' '),
+                  url: publicUrl,
+                  category: 'ghibli'
+                };
+              });
+            
+            setImages(storageImages);
+          } else {
+            // If no images in storage either, we'll fall back to our fallback images
+            console.log('No images found in Supabase storage, using fallbacks');
+          }
+        }
       } catch (error) {
         console.error("Error fetching sample images:", error);
         toast({
@@ -147,7 +186,7 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
             className="mx-auto"
             onClick={() => onSelectImage(displayImages.find(img => img.id === selectedImageId)?.url || "")}
           >
-            <ImageIcon size={16} />
+            <ImageIcon size={16} className="mr-2" />
             Use Selected Image
           </Button>
         </div>
