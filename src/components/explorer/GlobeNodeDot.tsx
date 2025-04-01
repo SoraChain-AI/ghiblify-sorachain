@@ -42,8 +42,8 @@ const GlobeNodeDot = ({ node, isActive, rotating }: GlobeNodeDotProps) => {
   // Adjust z-index for dots appearing "behind" the globe
   const zIndex = Math.cos(lat) * Math.cos(lon) > 0 ? 10 : 0;
   
-  // Size based on improvement
-  const size = 4 + (node.improvement * 10);
+  // Size based on improvement (made larger for better visibility)
+  const size = 8 + (node.improvement * 15);
   
   // Get time since last contribution
   const timeSince = Math.max(0, new Date().getTime() - new Date(node.lastContribution).getTime());
@@ -58,19 +58,20 @@ const GlobeNodeDot = ({ node, isActive, rotating }: GlobeNodeDotProps) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <div 
-            className={`absolute rounded-full transition-all duration-300`}
+            className={`absolute rounded-full transition-all duration-300 animate-pulse-gentle border`}
             style={{
               left: `${x}px`,
               top: `${y}px`,
               width: `${size}px`,
               height: `${size}px`,
               backgroundColor: isRecent ? '#9b87f5' : '#8FB3DE',
+              borderColor: isActive ? 'white' : 'transparent',
               boxShadow: isActive 
-                ? '0 0 0 8px rgba(155, 135, 245, 0.3), 0 0 20px rgba(155, 135, 245, 0.5)' 
-                : '0 0 5px rgba(255, 255, 255, 0.7)',
+                ? '0 0 0 4px rgba(155, 135, 245, 0.3), 0 0 20px rgba(155, 135, 245, 0.8)' 
+                : '0 0 10px rgba(155, 255, 255, 0.9), 0 0 15px rgba(155, 135, 245, 0.5) inset',
               transform: isActive ? 'scale(1.5)' : 'scale(1)',
               zIndex: isActive ? 20 : zIndex,
-              opacity: (Math.cos(lat) * Math.cos(lon) > 0) ? 1 : 0.3,
+              opacity: (Math.cos(lat) * Math.cos(lon) > 0) ? 1 : 0.5,
             }}
           />
         </TooltipTrigger>

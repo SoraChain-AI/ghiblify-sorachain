@@ -14,28 +14,39 @@ interface GlobeProps {
 }
 
 const Globe = ({ nodes, activeNode, rotating, setRotating }: GlobeProps) => {
+  // Use state to track if the main image failed to load
+  const [imageError, setImageError] = useState(false);
+
   return (
     <div className="relative w-full h-[400px] bg-ghibli-cream rounded-lg overflow-hidden border border-ghibli-brown border-opacity-20 p-2">
       {/* 3D Globe representation */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div 
-          className={`relative w-[300px] h-[300px] rounded-full bg-blue-100 border-2 border-blue-300 shadow-lg ${rotating ? 'animate-spin-slow' : ''}`}
+          className={`relative w-[300px] h-[300px] rounded-full bg-gradient-to-b from-blue-200 to-blue-400 border-4 border-blue-300 shadow-xl ${rotating ? 'animate-spin-slow' : ''}`}
           style={{
-            backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17_with_transparent_background.png')",
+            backgroundImage: !imageError ? "url('https://www.transparentpng.com/thumb/earth/RlGAZi-earth-free-download.png')" : "none",
             backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
             backgroundPosition: "center"
           }}
           onClick={() => setRotating(!rotating)}
         >
-          <div className="absolute top-0 right-0 m-2 text-xs text-ghibli-blue bg-white px-2 py-1 rounded-full opacity-70">
+          {/* Fallback image onError */}
+          <img 
+            src="https://www.transparentpng.com/thumb/earth/RlGAZi-earth-free-download.png" 
+            className="hidden"
+            onError={() => setImageError(true)} 
+          />
+
+          <div className="absolute top-0 right-0 m-2 text-xs text-white bg-blue-500 px-2 py-1 rounded-full shadow-md">
             Click to {rotating ? 'pause' : 'rotate'}
           </div>
           
           {/* Globe icon as a fallback */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0">
-            <GlobeIcon className="w-full h-full text-blue-400" />
-          </div>
+          {imageError && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <GlobeIcon className="w-full h-full text-blue-400" />
+            </div>
+          )}
         </div>
       </div>
       
@@ -54,7 +65,7 @@ const Globe = ({ nodes, activeNode, rotating, setRotating }: GlobeProps) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-md">
+              <button className="h-8 w-8 rounded-full bg-white flex items-center justify-center shadow-md border border-gray-200">
                 <Info className="h-4 w-4 text-primary" />
               </button>
             </TooltipTrigger>
