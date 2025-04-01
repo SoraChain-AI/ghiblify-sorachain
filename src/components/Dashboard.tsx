@@ -167,7 +167,7 @@ const Dashboard = ({ user }: DashboardProps) => {
                   </div>
                   
                   <p className="font-medium text-ghibli-dark-green">
-                    {royalty.amount.toFixed(3)} SoraToken
+                    {royalty.amount.toFixed(3)} $SORA
                   </p>
                 </div>
               ))}
