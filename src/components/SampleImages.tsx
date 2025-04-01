@@ -38,42 +38,80 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
         
         if (dbImages && dbImages.length > 0) {
           setImages(dbImages);
-        } else {
-          // If no images in the database, try to fetch from storage
-          const { data: storageData, error: storageError } = await supabase
-            .storage
-            .from('sample_images')
-            .list('ghibli', {
-              limit: 10,
-              sortBy: { column: 'name', order: 'asc' },
+          setLoading(false);
+          return;
+        }
+        
+        // If no images in the database, try to fetch from storage root
+        const { data: storageRootData, error: storageRootError } = await supabase
+          .storage
+          .from('sample_images')
+          .list('', {
+            limit: 20,
+            sortBy: { column: 'name', order: 'asc' },
+          });
+        
+        if (storageRootError) {
+          console.error("Error fetching from storage root:", storageRootError);
+          // Continue to try the ghibli folder if root fails
+        } else if (storageRootData && storageRootData.length > 0) {
+          // Transform storage objects to our SampleImage format
+          const storageImages: SampleImage[] = storageRootData
+            .filter(item => !item.id.endsWith('/') && item.name.match(/\.(jpe?g|png|gif|webp)$/i)) // Filter out folders and non-images
+            .map(item => {
+              const publicUrl = supabase.storage
+                .from('sample_images')
+                .getPublicUrl(`${item.name}`).data.publicUrl;
+              
+              return {
+                id: item.id,
+                name: item.name.split('.')[0].replace(/_/g, ' '),
+                url: publicUrl,
+                category: 'sample'
+              };
             });
           
-          if (storageError) {
-            throw storageError;
-          }
-          
-          if (storageData && storageData.length > 0) {
-            // Transform storage objects to our SampleImage format
-            const storageImages: SampleImage[] = storageData
-              .filter(item => !item.id.endsWith('/')) // Filter out folders
-              .map(item => {
-                const publicUrl = supabase.storage
-                  .from('sample_images')
-                  .getPublicUrl(`ghibli/${item.name}`).data.publicUrl;
-                
-                return {
-                  id: item.id,
-                  name: item.name.split('.')[0].replace(/_/g, ' '),
-                  url: publicUrl,
-                  category: 'ghibli'
-                };
-              });
-            
+          if (storageImages.length > 0) {
             setImages(storageImages);
-          } else {
-            // If no images in storage either, we'll fall back to our fallback images
-            console.log('No images found in Supabase storage, using fallbacks');
+            setLoading(false);
+            return;
           }
+        }
+        
+        // If still no images, try the ghibli subfolder
+        const { data: storageData, error: storageError } = await supabase
+          .storage
+          .from('sample_images')
+          .list('ghibli', {
+            limit: 10,
+            sortBy: { column: 'name', order: 'asc' },
+          });
+        
+        if (storageError) {
+          throw storageError;
+        }
+        
+        if (storageData && storageData.length > 0) {
+          // Transform storage objects to our SampleImage format
+          const storageImages: SampleImage[] = storageData
+            .filter(item => !item.id.endsWith('/') && item.name.match(/\.(jpe?g|png|gif|webp)$/i)) // Filter out folders and non-images
+            .map(item => {
+              const publicUrl = supabase.storage
+                .from('sample_images')
+                .getPublicUrl(`ghibli/${item.name}`).data.publicUrl;
+              
+              return {
+                id: item.id,
+                name: item.name.split('.')[0].replace(/_/g, ' '),
+                url: publicUrl,
+                category: 'ghibli'
+              };
+            });
+          
+          setImages(storageImages);
+        } else {
+          // If no images in storage either, log that we'll use fallbacks
+          console.log('No images found in Supabase storage, using fallbacks');
         }
       } catch (error) {
         console.error("Error fetching sample images:", error);
