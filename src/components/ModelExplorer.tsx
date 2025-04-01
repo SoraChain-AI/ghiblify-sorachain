@@ -14,7 +14,7 @@ const ModelExplorer = () => {
   
   useEffect(() => {
     // Initialize with more mock nodes for better distribution
-    const initialNodes = generateMockNodes(25);
+    const initialNodes = generateMockNodes(30); // Increased from 25 to 30
     
     // Assign actual coordinates based on location names
     // Add some random offset to prevent overlapping
@@ -23,8 +23,8 @@ const ModelExplorer = () => {
       const coordinates = countryCoordinates[country] || [0, 0];
       
       // Add small random offsets to longitude and latitude for better distribution
-      const longitudeOffset = (Math.random() - 0.5) * 10; // +/- 5 degrees
-      const latitudeOffset = (Math.random() - 0.5) * 10;  // +/- 5 degrees
+      const longitudeOffset = (Math.random() - 0.5) * 8; // +/- 4 degrees
+      const latitudeOffset = (Math.random() - 0.5) * 8;  // +/- 4 degrees
       
       return {
         ...node,
@@ -40,7 +40,7 @@ const ModelExplorer = () => {
     
     // Simulate new contributions coming in
     const interval = setInterval(() => {
-      const randomNodeIndex = Math.floor(Math.random() * 25);
+      const randomNodeIndex = Math.floor(Math.random() * 30); // Updated to match new node count
       const improvement = Math.random() * 0.3;
       
       // Get a random country for the notification
@@ -48,8 +48,8 @@ const ModelExplorer = () => {
       const coordinates = countryCoordinates[randomCountry] || [0, 0];
       
       // Add random offset for the new node as well
-      const longitudeOffset = (Math.random() - 0.5) * 10;
-      const latitudeOffset = (Math.random() - 0.5) * 10;
+      const longitudeOffset = (Math.random() - 0.5) * 8;
+      const latitudeOffset = (Math.random() - 0.5) * 8;
       
       // Update the node
       setNodes(prev => {
@@ -81,7 +81,7 @@ const ModelExplorer = () => {
         setActiveNode(null);
       }, 2000);
       
-    }, 8000);
+    }, 4000); // Decreased from 8000ms to 4000ms for higher update frequency
     
     return () => clearInterval(interval);
   }, [toast]);

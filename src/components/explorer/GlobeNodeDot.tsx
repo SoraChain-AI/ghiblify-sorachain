@@ -29,14 +29,13 @@ const GlobeNodeDot = ({
   const longitude = node.longitude || 0;
   const latitude = node.latitude || 0;
 
-  // Improved positioning calculation with better spread
-  // Map longitude from -180..180 to 5..95% of the container width
-  // This gives a wider distribution of dots
-  const x = ((longitude + 180) / 360) * 90 + 5;
+  // More natural positioning calculation
+  // Map longitude from -180..180 to 10..90% of the container width
+  const x = ((longitude + 180) / 360) * 80 + 10;
 
-  // Map latitude from -90..90 to 5..95% of the container height
+  // Map latitude from -90..90 to 10..90% of the container height
   // Also invert it because the y-axis is inverted in CSS (0 is at the top)
-  const y = ((90 - latitude) / 180) * 90 + 5;
+  const y = ((90 - latitude) / 180) * 80 + 10;
 
   // Size based on improvement (made larger for better visibility)
   const size = 8 + node.improvement * 15;
