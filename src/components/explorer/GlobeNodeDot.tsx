@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ModelNode } from "@/lib/types";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -12,13 +13,13 @@ interface GlobeNodeDotProps {
 
 // Helper function to format time
 export const formatTime = (date: Date): string => {
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
+  const diffInSeconds = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000);
   if (diffInSeconds < 60) return 'Just now';
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
   return `${Math.floor(diffInSeconds / 86400)} days ago`;
 };
+
 const GlobeNodeDot = ({
   node,
   isActive,
@@ -49,6 +50,7 @@ const GlobeNodeDot = ({
 
   // Extra rotation effect for nodes
   const rotationOffset = rotating ? `translateX(${Math.sin(Date.now() / 3000) * 5}px)` : '';
+  
   return <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
@@ -57,9 +59,9 @@ const GlobeNodeDot = ({
           top: `${y}%`,
           width: `${size}px`,
           height: `${size}px`,
-          backgroundColor: isRecent ? '#9b87f5' : '#8FB3DE',
+          backgroundColor: isRecent ? '#FEF7CD' : '#FFEB3B', // Changed to yellow colors
           borderColor: isActive ? 'white' : 'transparent',
-          boxShadow: isActive ? '0 0 0 4px rgba(155, 135, 245, 0.3), 0 0 20px rgba(155, 135, 245, 0.8)' : '0 0 10px rgba(155, 255, 255, 0.9), 0 0 15px rgba(155, 135, 245, 0.5) inset',
+          boxShadow: isActive ? '0 0 0 4px rgba(255, 235, 59, 0.3), 0 0 20px rgba(255, 235, 59, 0.8)' : '0 0 10px rgba(255, 255, 0, 0.9), 0 0 15px rgba(255, 235, 59, 0.5) inset',
           transform: `${isActive ? 'scale(1.5)' : 'scale(1)'} ${rotating ? rotationOffset : ''}`,
           zIndex: isActive ? 20 : 10
         }} className="" />
@@ -74,4 +76,5 @@ const GlobeNodeDot = ({
       </Tooltip>
     </TooltipProvider>;
 };
+
 export default GlobeNodeDot;
