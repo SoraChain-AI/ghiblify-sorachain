@@ -22,27 +22,38 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
   const [images, setImages] = useState<SampleImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const [fetchingSource, setFetchingSource] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
+        console.log("Starting to fetch images");
+        
         // First try to fetch from the sample_images table
+        setFetchingSource("database");
         const { data: dbImages, error: dbError } = await supabase
           .from('sample_images')
           .select('*');
         
         if (dbError) {
+          console.error("Error fetching from database:", dbError);
           throw dbError;
         }
         
         if (dbImages && dbImages.length > 0) {
+          console.log(`Found ${dbImages.length} images in the database`);
           setImages(dbImages);
           setLoading(false);
           return;
+        } else {
+          console.log("No images found in database");
         }
         
         // If no images in the database, try to fetch from storage root
+        setFetchingSource("storage root");
+        console.log("Fetching from storage root");
+        
         const { data: storageRootData, error: storageRootError } = await supabase
           .storage
           .from('sample_images')
@@ -55,6 +66,8 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
           console.error("Error fetching from storage root:", storageRootError);
           // Continue to try the ghibli folder if root fails
         } else if (storageRootData && storageRootData.length > 0) {
+          console.log(`Found ${storageRootData.length} items in storage root`);
+          
           // Transform storage objects to our SampleImage format
           const storageImages: SampleImage[] = storageRootData
             .filter(item => !item.id.endsWith('/') && item.name.match(/\.(jpe?g|png|gif|webp)$/i)) // Filter out folders and non-images
@@ -62,6 +75,8 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
               const publicUrl = supabase.storage
                 .from('sample_images')
                 .getPublicUrl(`${item.name}`).data.publicUrl;
+              
+              console.log(`Storage root image: ${item.name} -> ${publicUrl}`);
               
               return {
                 id: item.id,
@@ -72,13 +87,21 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
             });
           
           if (storageImages.length > 0) {
+            console.log(`Found ${storageImages.length} images in storage root`);
             setImages(storageImages);
             setLoading(false);
             return;
+          } else {
+            console.log("No valid images in storage root");
           }
+        } else {
+          console.log("No items found in storage root");
         }
         
         // If still no images, try the ghibli subfolder
+        setFetchingSource("ghibli folder");
+        console.log("Fetching from ghibli folder");
+        
         const { data: storageData, error: storageError } = await supabase
           .storage
           .from('sample_images')
@@ -88,10 +111,13 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
           });
         
         if (storageError) {
+          console.error("Error fetching from ghibli folder:", storageError);
           throw storageError;
         }
         
         if (storageData && storageData.length > 0) {
+          console.log(`Found ${storageData.length} items in ghibli folder`);
+          
           // Transform storage objects to our SampleImage format
           const storageImages: SampleImage[] = storageData
             .filter(item => !item.id.endsWith('/') && item.name.match(/\.(jpe?g|png|gif|webp)$/i)) // Filter out folders and non-images
@@ -99,6 +125,8 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
               const publicUrl = supabase.storage
                 .from('sample_images')
                 .getPublicUrl(`ghibli/${item.name}`).data.publicUrl;
+              
+              console.log(`Ghibli image: ${item.name} -> ${publicUrl}`);
               
               return {
                 id: item.id,
@@ -108,16 +136,24 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
               };
             });
           
-          setImages(storageImages);
+          if (storageImages.length > 0) {
+            console.log(`Found ${storageImages.length} images in ghibli folder`);
+            setImages(storageImages);
+            setLoading(false);
+            return;
+          } else {
+            console.log("No valid images in ghibli folder");
+          }
         } else {
-          // If no images in storage either, log that we'll use fallbacks
-          console.log('No images found in Supabase storage, using fallbacks');
+          console.log("No items found in ghibli folder");
         }
+        
+        console.log('No images found in database or storage, using fallbacks');
       } catch (error) {
         console.error("Error fetching sample images:", error);
         toast({
           title: "Failed to load sample images",
-          description: "Please try again later",
+          description: `Error while fetching from ${fetchingSource}: ${error instanceof Error ? error.message : 'Unknown error'}`,
           variant: "destructive",
         });
       } finally {
@@ -201,11 +237,15 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
                 alt={image.name} 
                 className="w-full h-full object-cover"
                 onError={(e) => {
+                  console.error(`Failed to load image: ${image.url}`);
                   e.currentTarget.src = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=500&auto=format";
                 }}
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
                 <p className="text-white text-sm font-medium truncate">{image.name}</p>
+                {image.category && (
+                  <p className="text-white/70 text-xs truncate">Source: {image.category}</p>
+                )}
                 {selectedImageId === image.id && (
                   <span className="absolute top-2 right-2 bg-ghibli-purple text-white rounded-full p-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
