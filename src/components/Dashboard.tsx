@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Coin, ImageIcon, Award, Receipt } from "lucide-react";
+import { Coins, ImageIcon, Award, Receipt } from "lucide-react";
 import { User, Contribution, NFT, Royalty, generateMockContributions, generateMockNFTs, generateMockRoyalties } from "@/lib/types";
 
 interface DashboardProps {
@@ -23,7 +22,6 @@ const Dashboard = ({ user }: DashboardProps) => {
   const [nfts] = useState<NFT[]>(generateMockNFTs(user.id, 6));
   const [royalties] = useState<Royalty[]>(generateMockRoyalties(10));
   
-  // Prepare chart data from contributions
   const chartData = contributions
     .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     .map((contribution) => ({
@@ -34,13 +32,12 @@ const Dashboard = ({ user }: DashboardProps) => {
 
   return (
     <div className="w-full max-w-4xl space-y-6">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <DashboardCard 
           title="Token Balance" 
           value={`${user.tokenBalance.toFixed(1)} ST`}
           description="Your earned SoraTokens"
-          icon={<Coin className="h-5 w-5" />}
+          icon={<Coins className="h-5 w-5" />}
           iconColor="text-ghibli-purple"
           iconBg="bg-ghibli-purple bg-opacity-20"
         />
@@ -64,7 +61,6 @@ const Dashboard = ({ user }: DashboardProps) => {
         />
       </div>
       
-      {/* Tabs for detailed information */}
       <Tabs defaultValue="contributions" className="ghibli-card p-6">
         <TabsList className="grid grid-cols-3 mb-6">
           <TabsTrigger value="contributions">Contributions</TabsTrigger>
@@ -76,7 +72,6 @@ const Dashboard = ({ user }: DashboardProps) => {
           <div className="space-y-6">
             <h3 className="text-lg font-medium">Contribution History</h3>
             
-            {/* Contribution Chart */}
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>
@@ -91,7 +86,6 @@ const Dashboard = ({ user }: DashboardProps) => {
               </ResponsiveContainer>
             </div>
             
-            {/* Contribution List */}
             <div className="space-y-3">
               {contributions.slice(0, 5).map((contribution) => (
                 <div 
