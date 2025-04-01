@@ -13,34 +13,49 @@ const ModelExplorer = () => {
   const [rotating, setRotating] = useState(true);
   
   useEffect(() => {
-    // Initialize with more mock nodes for better distribution
-    const initialNodes = generateMockNodes(30); // Increased from 25 to 30
-    
-    // Assign actual coordinates based on location names
-    // Add some random offset to prevent overlapping
-    const nodesWithCoordinates = initialNodes.map(node => {
-      const country = node.location;
-      const coordinates = countryCoordinates[country] || [0, 0];
-      
-      // Add small random offsets to longitude and latitude for better distribution
-      const longitudeOffset = (Math.random() - 0.5) * 8; // +/- 4 degrees
-      const latitudeOffset = (Math.random() - 0.5) * 8;  // +/- 4 degrees
-      
-      return {
-        ...node,
-        longitude: coordinates[0] + longitudeOffset,
-        latitude: coordinates[1] + latitudeOffset
-      };
-    });
-    
-    setNodes(nodesWithCoordinates);
+    // Start with an empty array and add nodes one by one with delays
+    setNodes([]);
     
     // Set initial global improvement
     setGlobalImprovement(Math.random() * 5);
     
+    // Add initial nodes gradually with timeouts to avoid clustering at start
+    const countries = Object.keys(countryCoordinates);
+    
+    // Create a function to add a node at a random position
+    const addRandomNode = (index: number) => {
+      if (index >= 30) return; // Stop after adding 30 nodes
+      
+      // Pick a random country
+      const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+      const coordinates = countryCoordinates[randomCountry] || [0, 0];
+      
+      // Add reasonable offset for better distribution
+      const longitudeOffset = (Math.random() - 0.5) * 8;
+      const latitudeOffset = (Math.random() - 0.5) * 8;
+      
+      // Create a new node
+      const newNode: ModelNode = {
+        id: Math.random().toString(36).substring(2, 9),
+        location: randomCountry,
+        longitude: coordinates[0] + longitudeOffset,
+        latitude: coordinates[1] + latitudeOffset,
+        lastContribution: new Date(Date.now() - Math.random() * 86400000),
+        improvement: Math.random() * 0.5
+      };
+      
+      // Add the node to the state
+      setNodes(prev => [...prev, newNode]);
+      
+      // Schedule next node addition
+      setTimeout(() => addRandomNode(index + 1), 100);
+    };
+    
+    // Start adding nodes after a short delay
+    setTimeout(() => addRandomNode(0), 500);
+    
     // Simulate new contributions coming in
     const interval = setInterval(() => {
-      const randomNodeIndex = Math.floor(Math.random() * 30); // Updated to match new node count
       const improvement = Math.random() * 0.3;
       
       // Get a random country for the notification
@@ -51,25 +66,31 @@ const ModelExplorer = () => {
       const longitudeOffset = (Math.random() - 0.5) * 8;
       const latitudeOffset = (Math.random() - 0.5) * 8;
       
-      // Update the node
+      // Update a random node or add a new one if there are fewer than 30
       setNodes(prev => {
-        const newNodes = [...prev];
-        newNodes[randomNodeIndex] = {
-          ...newNodes[randomNodeIndex],
-          lastContribution: new Date(),
-          improvement: improvement,
-          location: randomCountry,
-          longitude: coordinates[0] + longitudeOffset,
-          latitude: coordinates[1] + latitudeOffset
-        };
-        return newNodes;
+        // If we have at least one node, update a random one
+        if (prev.length > 0) {
+          const randomNodeIndex = Math.floor(Math.random() * prev.length);
+          const newNodes = [...prev];
+          newNodes[randomNodeIndex] = {
+            ...newNodes[randomNodeIndex],
+            lastContribution: new Date(),
+            improvement: improvement,
+            location: randomCountry,
+            longitude: coordinates[0] + longitudeOffset,
+            latitude: coordinates[1] + latitudeOffset
+          };
+          return newNodes;
+        }
+        // Fallback if there are no nodes yet (shouldn't happen with our new approach)
+        return prev;
       });
       
       // Update global improvement
       setGlobalImprovement(prev => prev + improvement * 0.1);
       
       // Show a toast for the contribution with the random country
-      setActiveNode(nodes[randomNodeIndex]?.id || null);
+      setActiveNode(nodes[0]?.id || null);
       
       toast({
         title: `New contribution from ${randomCountry} 🌍`,
@@ -81,7 +102,7 @@ const ModelExplorer = () => {
         setActiveNode(null);
       }, 2000);
       
-    }, 4000); // Decreased from 8000ms to 4000ms for higher update frequency
+    }, 4000); // Keep the 4000ms frequency for updates
     
     return () => clearInterval(interval);
   }, [toast]);
