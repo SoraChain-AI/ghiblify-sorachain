@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email?: string;
@@ -30,6 +29,8 @@ export interface ModelNode {
   location: string;
   lastContribution: Date;
   improvement: number;
+  longitude?: number;
+  latitude?: number;
 }
 
 export interface NFT {
@@ -103,10 +104,35 @@ export const generateMockNodes = (count: number): ModelNode[] => {
     "Cape Town", "Mexico City", "Oslo", "Cairo", "Seoul"
   ];
   
-  return Array(count).fill(null).map(() => ({
-    id: Math.random().toString(36).substring(2, 9),
-    location: locations[Math.floor(Math.random() * locations.length)],
-    lastContribution: new Date(Date.now() - Math.random() * 86400000),
-    improvement: Math.random() * 0.5
-  }));
+  const coordinates: Record<string, [number, number]> = {
+    "Tokyo": [139.7, 35.7],
+    "New York": [-74.0, 40.7],
+    "London": [-0.1, 51.5],
+    "Paris": [2.3, 48.9],
+    "Sydney": [151.2, -33.9],
+    "Berlin": [13.4, 52.5],
+    "Toronto": [-79.4, 43.7],
+    "Singapore": [103.8, 1.4],
+    "Mumbai": [72.9, 19.1],
+    "São Paulo": [-46.6, -23.6],
+    "Cape Town": [18.4, -33.9],
+    "Mexico City": [-99.1, 19.4],
+    "Oslo": [10.8, 59.9],
+    "Cairo": [31.2, 30.0],
+    "Seoul": [127.0, 37.6]
+  };
+  
+  return Array(count).fill(null).map(() => {
+    const location = locations[Math.floor(Math.random() * locations.length)];
+    const [longitude, latitude] = coordinates[location] || [0, 0];
+    
+    return {
+      id: Math.random().toString(36).substring(2, 9),
+      location,
+      longitude,
+      latitude,
+      lastContribution: new Date(Date.now() - Math.random() * 86400000),
+      improvement: Math.random() * 0.5
+    };
+  });
 };
