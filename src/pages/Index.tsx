@@ -24,7 +24,7 @@ const Index = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-lg mx-auto md:mx-0">
-              Experience the wonder of Studio Ghibli-style art while helping train AI through private, on-device <span className="font-semibold text-ghibli-purple">federated learning</span>.
+              Experience the wonder of Studio Ghibli-style art while helping train AI through private, on-device <span className="font-bold text-[#6B46C1]">federated learning</span>.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-8">
