@@ -73,6 +73,8 @@ export default {
 					brown: '#D1BFA8',
 					"dark-green": '#5E9E8F',
 					"dark-blue": '#8FB3DE',
+					"dark-pink": '#D946EF',     // Added missing dark-pink color
+					"dark-purple": '#8B5CF6',   // Added missing dark-purple color
 				}
 			},
 			borderRadius: {

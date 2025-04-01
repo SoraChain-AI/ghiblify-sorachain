@@ -19,6 +19,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/70",
         ghost: "hover:bg-accent/80 hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        ghibli: "py-2 px-6 bg-gradient-to-br from-ghibli-dark-pink to-ghibli-dark-purple text-foreground font-medium rounded-full shadow-md hover:shadow-lg transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ghibli-purple focus:ring-opacity-50",
+        ghibliSecondary: "py-2 px-6 bg-gradient-to-br from-ghibli-dark-blue to-ghibli-dark-green text-foreground font-medium rounded-full shadow-md hover:shadow-lg transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ghibli-green focus:ring-opacity-50",
       },
       size: {
         default: "h-10 px-4 py-2",
