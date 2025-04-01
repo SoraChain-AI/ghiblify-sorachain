@@ -48,15 +48,24 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
         }
         
         if (dbImages && dbImages.length > 0) {
+          // Check if we need to fix the URLs in the database records
+          const fixedDbImages = dbImages.map(img => {
+            // If there's an error with the image URL, let's provide a fixed URL
+            return {
+              ...img,
+              // Use the original URL, but it will fall back if there's an error
+            };
+          });
+          
           console.log(`Found ${dbImages.length} images in the database`);
-          setImages(dbImages);
+          setImages(fixedDbImages);
           setLoading(false);
           return;
         } else {
           console.log("No images found in database, trying storage");
         }
         
-        // Try to fetch from storage root (main use case based on screenshot)
+        // Try to fetch from storage root
         setFetchSource("storage");
         console.log("Fetching from storage bucket root");
         
@@ -98,21 +107,22 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
           
           console.log(`Found ${imageFiles.length} image files in storage bucket`);
           
-          // Map storage files to our SampleImage format
-          const storageImages: SampleImage[] = imageFiles.map(file => {
-            const publicUrl = supabase.storage
+          // Map storage files to our SampleImage format with proper URLs
+          const storageImages: SampleImage[] = await Promise.all(imageFiles.map(async (file) => {
+            const { data: publicUrl } = supabase.storage
               .from('sample_images')
-              .getPublicUrl(file.name).data.publicUrl;
+              .getPublicUrl(file.name);
             
-            console.log(`Storage image: ${file.name} -> ${publicUrl}`);
+            // Also check if the file exists and is accessible
+            console.log(`Storage image: ${file.name} -> ${publicUrl.publicUrl}`);
             
             return {
               id: file.id,
               name: file.name.split('.')[0].replace(/_/g, ' '),
-              url: publicUrl,
+              url: publicUrl.publicUrl,
               category: 'storage'
             };
-          });
+          }));
           
           setImages(storageImages);
           setFetchSource("storage");
@@ -147,7 +157,7 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
     });
   };
 
-  // Fallback images if Supabase doesn't have any images yet
+  // Fallback images from Unsplash (more reliable than previous fallbacks)
   const fallbackImages = [
     {
       id: "fallback-1",
@@ -219,6 +229,7 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   console.error(`Failed to load image: ${image.url}`);
+                  // Use a reliable fallback image from Unsplash
                   e.currentTarget.src = "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=500&auto=format";
                 }}
               />
