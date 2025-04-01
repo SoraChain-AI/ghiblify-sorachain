@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -19,145 +18,36 @@ interface SampleImagesProps {
 }
 
 const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
-  const [images, setImages] = useState<SampleImage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
-  const [fetchSource, setFetchSource] = useState<string>("loading");
   const { toast } = useToast();
+  
+  // Use the provided image links directly
+  const images: SampleImage[] = [
+    {
+      id: "image-1",
+      name: "Scenic Image 1",
+      description: "Beautiful scenery",
+      url: "https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/public/sample_images//IMG_4142.jpeg",
+      category: "landscape"
+    },
+    {
+      id: "image-2",
+      name: "Scenic Image 2",
+      description: "Stunning view",
+      url: "https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/public/sample_images//IMG_4149.jpeg",
+      category: "landscape"
+    },
+    {
+      id: "image-3",
+      name: "Scenic Image 3",
+      description: "Amazing landscape",
+      url: "https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/public/sample_images//IMG_4164.jpeg",
+      category: "landscape"
+    }
+  ];
 
-  useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        console.log("Starting to fetch images");
-        
-        // First try to fetch from the sample_images table
-        setFetchSource("database");
-        console.log("Fetching from database table");
-        
-        const { data: dbImages, error: dbError } = await supabase
-          .from('sample_images')
-          .select('*');
-        
-        if (dbError) {
-          console.error("Error fetching from database:", dbError);
-          toast({
-            title: "Error fetching from database",
-            description: dbError.message,
-            variant: "destructive",
-          });
-        }
-        
-        if (dbImages && dbImages.length > 0) {
-          // Check if we need to fix the URLs in the database records
-          const fixedDbImages = dbImages.map(img => {
-            // If there's an error with the image URL, let's provide a fixed URL
-            return {
-              ...img,
-              // Use the original URL, but it will fall back if there's an error
-            };
-          });
-          
-          console.log(`Found ${dbImages.length} images in the database`);
-          setImages(fixedDbImages);
-          setLoading(false);
-          return;
-        } else {
-          console.log("No images found in database, trying storage");
-        }
-        
-        // Try to fetch from storage root
-        setFetchSource("storage");
-        console.log("Fetching from storage bucket root");
-        
-        const { data: storageFiles, error: storageError } = await supabase
-          .storage
-          .from('sample_images')
-          .list('', {
-            limit: 100,
-            sortBy: { column: 'name', order: 'asc' },
-          });
-        
-        if (storageError) {
-          console.error("Error fetching from storage:", storageError);
-          toast({
-            title: "Error fetching from storage",
-            description: storageError.message,
-            variant: "destructive",
-          });
-          setFetchSource("fallback");
-          setLoading(false);
-          return;
-        }
-        
-        if (storageFiles && storageFiles.length > 0) {
-          console.log(`Found ${storageFiles.length} files in storage bucket`);
-          
-          // Filter for image files only
-          const imageFiles = storageFiles.filter(file => 
-            !file.id.endsWith('/') && 
-            /\.(jpe?g|png|gif|webp)$/i.test(file.name)
-          );
-          
-          if (imageFiles.length === 0) {
-            console.log("No image files found in storage bucket");
-            setFetchSource("fallback");
-            setLoading(false);
-            return;
-          }
-          
-          console.log(`Found ${imageFiles.length} image files in storage bucket`);
-          
-          // Map storage files to our SampleImage format with proper URLs
-          const storageImages: SampleImage[] = await Promise.all(imageFiles.map(async (file) => {
-            const { data: publicUrl } = supabase.storage
-              .from('sample_images')
-              .getPublicUrl(file.name);
-            
-            // Also check if the file exists and is accessible
-            console.log(`Storage image: ${file.name} -> ${publicUrl.publicUrl}`);
-            
-            return {
-              id: file.id,
-              name: file.name.split('.')[0].replace(/_/g, ' '),
-              url: publicUrl.publicUrl,
-              category: 'storage'
-            };
-          }));
-          
-          setImages(storageImages);
-          setFetchSource("storage");
-          setLoading(false);
-          return;
-        } else {
-          console.log("No files found in storage bucket");
-          setFetchSource("fallback");
-        }
-      } catch (error) {
-        console.error("Error fetching sample images:", error);
-        toast({
-          title: "Failed to load sample images",
-          description: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          variant: "destructive",
-        });
-        setFetchSource("fallback");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchImages();
-  }, [toast]);
-
-  const handleSelectImage = (image: SampleImage) => {
-    setSelectedImageId(image.id);
-    onSelectImage(image.url);
-    toast({
-      title: "Image selected",
-      description: `${image.name} has been selected for transformation`,
-    });
-  };
-
-  // Fallback images from Unsplash (more reliable than previous fallbacks)
+  // Fallback images from Unsplash (in case the provided images fail to load)
   const fallbackImages = [
     {
       id: "fallback-1",
@@ -189,8 +79,17 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
     }
   ];
 
-  // Use fallback images only if no images were found in Supabase
-  const displayImages = images.length > 0 ? images : fallbackImages;
+  const handleSelectImage = (image: SampleImage) => {
+    setSelectedImageId(image.id);
+    onSelectImage(image.url);
+    toast({
+      title: "Image selected",
+      description: `${image.name} has been selected for transformation`,
+    });
+  };
+
+  // Use the provided images, no need to check for empty state
+  const displayImages = images;
 
   return (
     <div className="w-full mb-12">
@@ -199,22 +98,16 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
         Select one of these images for Ghibli-style transformation
       </p>
       
-      {fetchSource !== "fallback" && (
-        <p className="text-center text-sm text-muted-foreground mb-6">
-          Source: {fetchSource === "database" ? "Supabase database" : "Supabase storage"}
-        </p>
-      )}
-      
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
             <div key={i} className="aspect-square rounded-lg overflow-hidden">
               <Skeleton className="w-full h-full" />
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {displayImages.map((image) => (
             <div 
               key={image.id} 
@@ -236,7 +129,7 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
                 <p className="text-white text-sm font-medium truncate">{image.name}</p>
                 {image.category && (
-                  <p className="text-white/70 text-xs truncate">Source: {image.category}</p>
+                  <p className="text-white/70 text-xs truncate">Category: {image.category}</p>
                 )}
                 {selectedImageId === image.id && (
                   <span className="absolute top-2 right-2 bg-ghibli-purple text-white rounded-full p-1">
