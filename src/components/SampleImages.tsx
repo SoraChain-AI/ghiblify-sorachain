@@ -22,7 +22,7 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
   const [images, setImages] = useState<SampleImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
-  const [fetchingSource, setFetchingSource] = useState<string | null>(null);
+  const [fetchSource, setFetchSource] = useState<string>("loading");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -31,14 +31,20 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
         console.log("Starting to fetch images");
         
         // First try to fetch from the sample_images table
-        setFetchingSource("database");
+        setFetchSource("database");
+        console.log("Fetching from database table");
+        
         const { data: dbImages, error: dbError } = await supabase
           .from('sample_images')
           .select('*');
         
         if (dbError) {
           console.error("Error fetching from database:", dbError);
-          throw dbError;
+          toast({
+            title: "Error fetching from database",
+            description: dbError.message,
+            variant: "destructive",
+          });
         }
         
         if (dbImages && dbImages.length > 0) {
@@ -47,115 +53,83 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
           setLoading(false);
           return;
         } else {
-          console.log("No images found in database");
+          console.log("No images found in database, trying storage");
         }
         
-        // If no images in the database, try to fetch from storage root
-        setFetchingSource("storage root");
-        console.log("Fetching from storage root");
+        // Try to fetch from storage root (main use case based on screenshot)
+        setFetchSource("storage");
+        console.log("Fetching from storage bucket root");
         
-        const { data: storageRootData, error: storageRootError } = await supabase
+        const { data: storageFiles, error: storageError } = await supabase
           .storage
           .from('sample_images')
           .list('', {
-            limit: 20,
-            sortBy: { column: 'name', order: 'asc' },
-          });
-        
-        if (storageRootError) {
-          console.error("Error fetching from storage root:", storageRootError);
-          // Continue to try the ghibli folder if root fails
-        } else if (storageRootData && storageRootData.length > 0) {
-          console.log(`Found ${storageRootData.length} items in storage root`);
-          
-          // Transform storage objects to our SampleImage format
-          const storageImages: SampleImage[] = storageRootData
-            .filter(item => !item.id.endsWith('/') && item.name.match(/\.(jpe?g|png|gif|webp)$/i)) // Filter out folders and non-images
-            .map(item => {
-              const publicUrl = supabase.storage
-                .from('sample_images')
-                .getPublicUrl(`${item.name}`).data.publicUrl;
-              
-              console.log(`Storage root image: ${item.name} -> ${publicUrl}`);
-              
-              return {
-                id: item.id,
-                name: item.name.split('.')[0].replace(/_/g, ' '),
-                url: publicUrl,
-                category: 'sample'
-              };
-            });
-          
-          if (storageImages.length > 0) {
-            console.log(`Found ${storageImages.length} images in storage root`);
-            setImages(storageImages);
-            setLoading(false);
-            return;
-          } else {
-            console.log("No valid images in storage root");
-          }
-        } else {
-          console.log("No items found in storage root");
-        }
-        
-        // If still no images, try the ghibli subfolder
-        setFetchingSource("ghibli folder");
-        console.log("Fetching from ghibli folder");
-        
-        const { data: storageData, error: storageError } = await supabase
-          .storage
-          .from('sample_images')
-          .list('ghibli', {
-            limit: 10,
+            limit: 100,
             sortBy: { column: 'name', order: 'asc' },
           });
         
         if (storageError) {
-          console.error("Error fetching from ghibli folder:", storageError);
-          throw storageError;
+          console.error("Error fetching from storage:", storageError);
+          toast({
+            title: "Error fetching from storage",
+            description: storageError.message,
+            variant: "destructive",
+          });
+          setFetchSource("fallback");
+          setLoading(false);
+          return;
         }
         
-        if (storageData && storageData.length > 0) {
-          console.log(`Found ${storageData.length} items in ghibli folder`);
+        if (storageFiles && storageFiles.length > 0) {
+          console.log(`Found ${storageFiles.length} files in storage bucket`);
           
-          // Transform storage objects to our SampleImage format
-          const storageImages: SampleImage[] = storageData
-            .filter(item => !item.id.endsWith('/') && item.name.match(/\.(jpe?g|png|gif|webp)$/i)) // Filter out folders and non-images
-            .map(item => {
-              const publicUrl = supabase.storage
-                .from('sample_images')
-                .getPublicUrl(`ghibli/${item.name}`).data.publicUrl;
-              
-              console.log(`Ghibli image: ${item.name} -> ${publicUrl}`);
-              
-              return {
-                id: item.id,
-                name: item.name.split('.')[0].replace(/_/g, ' '),
-                url: publicUrl,
-                category: 'ghibli'
-              };
-            });
+          // Filter for image files only
+          const imageFiles = storageFiles.filter(file => 
+            !file.id.endsWith('/') && 
+            /\.(jpe?g|png|gif|webp)$/i.test(file.name)
+          );
           
-          if (storageImages.length > 0) {
-            console.log(`Found ${storageImages.length} images in ghibli folder`);
-            setImages(storageImages);
+          if (imageFiles.length === 0) {
+            console.log("No image files found in storage bucket");
+            setFetchSource("fallback");
             setLoading(false);
             return;
-          } else {
-            console.log("No valid images in ghibli folder");
           }
+          
+          console.log(`Found ${imageFiles.length} image files in storage bucket`);
+          
+          // Map storage files to our SampleImage format
+          const storageImages: SampleImage[] = imageFiles.map(file => {
+            const publicUrl = supabase.storage
+              .from('sample_images')
+              .getPublicUrl(file.name).data.publicUrl;
+            
+            console.log(`Storage image: ${file.name} -> ${publicUrl}`);
+            
+            return {
+              id: file.id,
+              name: file.name.split('.')[0].replace(/_/g, ' '),
+              url: publicUrl,
+              category: 'storage'
+            };
+          });
+          
+          setImages(storageImages);
+          setFetchSource("storage");
+          setLoading(false);
+          return;
         } else {
-          console.log("No items found in ghibli folder");
+          console.log("No files found in storage bucket");
+          setFetchSource("fallback");
         }
-        
-        console.log('No images found in database or storage, using fallbacks');
       } catch (error) {
         console.error("Error fetching sample images:", error);
         toast({
           title: "Failed to load sample images",
-          description: `Error while fetching from ${fetchingSource}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          description: `Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
           variant: "destructive",
         });
+        setFetchSource("fallback");
       } finally {
         setLoading(false);
       }
@@ -180,39 +154,46 @@ const SampleImages = ({ onSelectImage }: SampleImagesProps) => {
       name: "Mountain Lake",
       description: "Tranquil mountain lake scene",
       url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=500&auto=format",
-      category: "nature"
+      category: "fallback"
     },
     {
       id: "fallback-2",
       name: "Forest Path",
       description: "Serene path through autumn forest",
       url: "https://images.unsplash.com/photo-1445363692815-ebcd599f7621?q=80&w=500&auto=format", 
-      category: "nature"
+      category: "fallback"
     },
     {
       id: "fallback-3",
       name: "Urban Street",
       description: "Cityscape with vibrant street life",
       url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=500&auto=format",
-      category: "urban"
+      category: "fallback"
     },
     {
       id: "fallback-4",
       name: "Cottage by the Sea",
       description: "Peaceful cottage overlooking the ocean",
       url: "https://images.unsplash.com/photo-1518173946687-a4c8892bbd9f?q=80&w=500&auto=format",
-      category: "architecture"
+      category: "fallback"
     }
   ];
 
+  // Use fallback images only if no images were found in Supabase
   const displayImages = images.length > 0 ? images : fallbackImages;
 
   return (
     <div className="w-full mb-12">
       <h2 className="text-2xl font-bold mb-4 text-center">Sample Images</h2>
-      <p className="text-muted-foreground mb-6 text-center max-w-md mx-auto">
+      <p className="text-muted-foreground mb-4 text-center max-w-md mx-auto">
         Select one of these images for Ghibli-style transformation
       </p>
+      
+      {fetchSource !== "fallback" && (
+        <p className="text-center text-sm text-muted-foreground mb-6">
+          Source: {fetchSource === "database" ? "Supabase database" : "Supabase storage"}
+        </p>
+      )}
       
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
