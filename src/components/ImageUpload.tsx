@@ -75,6 +75,11 @@ const ImageUpload = () => {
       return;
     }
 
+    // Store the selected image URL in localStorage
+    if (preview) {
+      localStorage.setItem("originalImageUrl", preview);
+    }
+
     // Navigate to the processing page
     navigate("/processing");
   };

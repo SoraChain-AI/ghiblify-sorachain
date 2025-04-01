@@ -1,29 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Download, Share2, Award } from "lucide-react";
+import { transformedImageMap } from "./sample-images/imageData";
 
-// Placeholder for the transformed image
-const TRANSFORMED_IMAGE = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05";
+const DEFAULT_TRANSFORMED_IMAGE = "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05";
+
 interface ResultDisplayProps {
   originalImage?: string;
   transformedImage?: string;
 }
+
 const ResultDisplay = ({
   originalImage,
-  transformedImage = TRANSFORMED_IMAGE
+  transformedImage
 }: ResultDisplayProps) => {
   const [claimingReward, setClaimingReward] = useState(false);
+  const [displayedImage, setDisplayedImage] = useState(transformedImage || DEFAULT_TRANSFORMED_IMAGE);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    const storedImageUrl = localStorage.getItem("originalImageUrl");
+    
+    if (storedImageUrl) {
+      if (transformedImageMap[storedImageUrl]) {
+        setDisplayedImage(transformedImageMap[storedImageUrl]);
+      }
+    }
+  }, []);
   
   const handleDownload = () => {
-    // In a real app, this would download the image
     const link = document.createElement('a');
-    link.href = transformedImage;
+    link.href = displayedImage;
     link.download = 'ghiblified-image.jpg';
     document.body.appendChild(link);
     link.click();
@@ -35,7 +45,6 @@ const ResultDisplay = ({
   };
   
   const handleShare = () => {
-    // In a real app, this would open a share dialog
     toast({
       title: "Share feature",
       description: "Sharing functionality would be implemented here."
@@ -45,7 +54,6 @@ const ResultDisplay = ({
   const handleClaimRewards = () => {
     setClaimingReward(true);
 
-    // Simulate blockchain transaction
     setTimeout(() => {
       setClaimingReward(false);
       toast({
@@ -53,7 +61,6 @@ const ResultDisplay = ({
         description: "20 $SORA have been added to your wallet."
       });
 
-      // Navigate to dashboard after claiming
       setTimeout(() => {
         navigate("/dashboard");
       }, 1500);
@@ -65,12 +72,12 @@ const ResultDisplay = ({
         <div className="inline-block p-2 bg-ghibli-green bg-opacity-30 rounded-full mb-3">
           <Award className="h-6 w-6 text-ghibli-dark-green" />
         </div>
-        <h2 className="text-2xl font-bold mb-2">Your Ghibli Transformation is Complete!</h2>
+        <h2 className="text-2xl font-bold mb-2">Your Ghiblified Transformation is Complete!</h2>
         
       </div>
       
       <div className="bg-black bg-opacity-5 rounded-lg overflow-hidden mb-6">
-        <img src={transformedImage} alt="Ghiblified Image" className="w-full h-auto object-cover" />
+        <img src={displayedImage} alt="Ghiblified Image" className="w-full h-auto object-cover" />
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -97,4 +104,5 @@ const ResultDisplay = ({
       </div>
     </div>;
 };
+
 export default ResultDisplay;

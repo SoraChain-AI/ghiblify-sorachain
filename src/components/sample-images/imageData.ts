@@ -26,6 +26,12 @@ export const sampleImages: SampleImage[] = [
   }
 ];
 
+// Mapping of original images to their transformed versions
+export const transformedImageMap: Record<string, string> = {
+  "https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/public/sample_images//IMG_4142.jpeg": 
+  "https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/public/sample_images//5181826D-103E-41D9-85C4-151FA0A4C9B3.PNG"
+};
+
 // Fallback images from Unsplash (in case the provided images fail to load)
 export const fallbackImages: SampleImage[] = [
   {
