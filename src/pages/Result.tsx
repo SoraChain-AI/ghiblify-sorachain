@@ -1,9 +1,22 @@
 
+import { useState, useEffect } from "react";
 import ResultDisplay from "@/components/ResultDisplay";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SuccessPopup from "@/components/SuccessPopup";
 
 const Result = () => {
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  
+  useEffect(() => {
+    // Show the popup after a slight delay when the component mounts
+    const timer = setTimeout(() => {
+      setShowSuccessPopup(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-ghibli-cream paper-texture flex flex-col">
       <Header />
@@ -17,6 +30,12 @@ const Result = () => {
           <div className="absolute top-[25%] right-[10%] w-8 h-8 rounded-full bg-ghibli-green opacity-20 animate-float"></div>
           <div className="absolute bottom-[25%] right-[20%] w-4 h-4 rounded-full bg-ghibli-purple opacity-30 animate-float-delayed"></div>
         </div>
+        
+        {/* Success popup */}
+        <SuccessPopup
+          open={showSuccessPopup}
+          onOpenChange={setShowSuccessPopup}
+        />
       </main>
       <Footer />
     </div>
