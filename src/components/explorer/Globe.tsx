@@ -60,10 +60,9 @@ const Globe = ({
         </TooltipProvider>
       </div>
       
-      <div className="mt-4 text-sm text-muted-foreground text-center absolute bottom-2 left-0 right-0">
-        Each dot represents an anonymous device contributing to the model.
-        Your data never leaves your device.
-      </div>
+      <div className="mt-4 text-sm text-muted-foreground text-center absolute bottom-2 left-0 right-0 my-0">Each dot represents an 
+anonymous device contributing to the model. 
+Your data never leaves your device.</div>
     </div>;
 };
 export default Globe;
