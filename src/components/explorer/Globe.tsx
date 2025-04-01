@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Info } from "lucide-react";
 import { ModelNode } from "@/lib/types";
@@ -18,14 +17,13 @@ const Globe = ({
 }: GlobeProps) => {
   // Use state to track if the main image failed to load
   const [imageError, setImageError] = useState(false);
-  return (
-    <div className="space-y-3">
+  return <div className="space-y-3">
       <div className="relative w-full h-[400px] bg-ghibli-cream rounded-lg overflow-hidden border border-ghibli-brown border-opacity-20 p-2">
         {/* World Map representation */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-full h-full overflow-hidden" onClick={() => setRotating(!rotating)}>
             {/* World Map Image */}
-            {!imageError ? <img alt="World Map" className="w-full h-full object-cover" onError={() => setImageError(true)} src="https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/sign/ghibli/75a94a063ab2fecf5e3f64abd90e6190.jpg?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJnaGlibGkvNzVhOTRhMDYzYWIyZmVjZjVlM2Y2NGFiZDkwZTYxOTAuanBnIiwiaWF0IjoxNzQzNTE2MjU4LCJleHAiOjE3NzUwNTIyNTh9.D9Dkoi0cA1ic7IgX7isq0YthuGejXgiwgXKkKvA-PfY" /> : <div className="w-full h-full flex items-center justify-center bg-blue-100">
+            {!imageError ? <img alt="World Map" className="w-full h-full object-cover" onError={() => setImageError(true)} src="https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/sign/ghibli/global-globalization-world-map-environmental-concservation-concept_53876-124164.avif?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJnaGlibGkvZ2xvYmFsLWdsb2JhbGl6YXRpb24td29ybGQtbWFwLWVudmlyb25tZW50YWwtY29uY3NlcnZhdGlvbi1jb25jZXB0XzUzODc2LTEyNDE2NC5hdmlmIiwiaWF0IjoxNzQzNTE2NDE4LCJleHAiOjE3NzUwNTI0MTh9.c_lgfipkrMGHMOtJB90zoqDC8knBR6OMM6cOQuooo8k" /> : <div className="w-full h-full flex items-center justify-center bg-blue-100">
                 <p className="text-blue-600">World Map Image Failed to Load</p>
               </div>}
 
@@ -69,7 +67,6 @@ const Globe = ({
         Each dot represents an anonymous device contributing to the model. 
         Your data never leaves your device.
       </div>
-    </div>
-  );
+    </div>;
 };
 export default Globe;
