@@ -5,6 +5,38 @@ import { ModelNode, generateMockNodes } from "@/lib/types";
 import Globe from "@/components/explorer/Globe";
 import { getRandomCountry, countryCoordinates } from "@/utils/countryData";
 
+// Helper function to create random ocean-based coordinates
+const getOceanCoordinates = () => {
+  // Randomly select an ocean region with higher probability for water areas
+  const oceanRegion = Math.random() * 100;
+  
+  if (oceanRegion < 35) {
+    // Pacific Ocean region (larger probability due to size)
+    return [
+      -180 + Math.random() * 80,
+      -40 + Math.random() * 80
+    ];
+  } else if (oceanRegion < 60) {
+    // Atlantic Ocean region
+    return [
+      -70 + Math.random() * 60,
+      -40 + Math.random() * 80
+    ];
+  } else if (oceanRegion < 80) {
+    // Indian Ocean region
+    return [
+      50 + Math.random() * 50,
+      -40 + Math.random() * 80
+    ];
+  } else {
+    // Southern Ocean / Antarctic region
+    return [
+      Math.random() * 360 - 180,
+      -60 - Math.random() * 30
+    ];
+  }
+};
+
 const ModelExplorer = () => {
   const [nodes, setNodes] = useState<ModelNode[]>([]);
   const [activeNode, setActiveNode] = useState<string | null>(null);
@@ -39,7 +71,8 @@ const ModelExplorer = () => {
         return;
       }
       
-      const coordinates = countryCoordinates[randomCountry] || [0, 0];
+      // Get ocean-based coordinates instead of country coordinates
+      const coordinates = getOceanCoordinates();
       
       // Create a new node
       const newNode: ModelNode = {
@@ -87,7 +120,7 @@ const ModelExplorer = () => {
         } else {
           // If we have fewer than 30 nodes, add a new one for this location
           if (newNodes.length < 30) {
-            const coordinates = countryCoordinates[randomCountry] || [0, 0];
+            const coordinates = getOceanCoordinates();
             
             const newNode: ModelNode = {
               id: Math.random().toString(36).substring(2, 9),

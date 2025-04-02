@@ -20,16 +20,60 @@ export const formatTime = (date: Date): string => {
   return `${Math.floor(diffInSeconds / 86400)} days ago`;
 };
 
+// Function to adjust coordinates to favor ocean/blue regions
+const adjustToOceanRegions = (longitude: number, latitude: number) => {
+  // Ocean regions mostly between -180 to 180 longitude, but favoring:
+  // Pacific: -180 to -100 (longitude)
+  // Atlantic: -70 to -10 (longitude)
+  // Indian: 50 to 100 (longitude)
+  // Southern Ocean: (latitude < -40)
+
+  // Randomly select an ocean region with higher probability for water areas
+  const oceanRegion = Math.random() * 100;
+  
+  if (oceanRegion < 35) {
+    // Pacific Ocean region (larger probability due to size)
+    return {
+      longitude: -180 + Math.random() * 80,
+      latitude: -40 + Math.random() * 80
+    };
+  } else if (oceanRegion < 60) {
+    // Atlantic Ocean region
+    return {
+      longitude: -70 + Math.random() * 60,
+      latitude: -40 + Math.random() * 80
+    };
+  } else if (oceanRegion < 80) {
+    // Indian Ocean region
+    return {
+      longitude: 50 + Math.random() * 50,
+      latitude: -40 + Math.random() * 80
+    };
+  } else {
+    // Southern Ocean / Antarctic region
+    return {
+      longitude: Math.random() * 360 - 180,
+      latitude: -60 - Math.random() * 30
+    };
+  }
+};
+
 const GlobeNodeDot = ({
   node,
   isActive,
   rotating
 }: GlobeNodeDotProps) => {
-  // Calculate position on the flat map
-  const longitude = node.longitude || 0;
-  const latitude = node.latitude || 0;
+  // Get base coordinates
+  let longitude = node.longitude || 0;
+  let latitude = node.latitude || 0;
+  
+  // Apply ocean-biased positioning for nodes without explicit coordinates
+  if (!node.longitude || !node.latitude) {
+    const oceanCoords = adjustToOceanRegions(longitude, latitude);
+    longitude = oceanCoords.longitude;
+    latitude = oceanCoords.latitude;
+  }
 
-  // More natural positioning calculation
   // Map longitude from -180..180 to 10..90% of the container width
   const x = ((longitude + 180) / 360) * 80 + 10;
 
