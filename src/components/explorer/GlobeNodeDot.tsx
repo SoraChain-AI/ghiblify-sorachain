@@ -31,29 +31,30 @@ const adjustToOceanRegions = (longitude: number, latitude: number) => {
   // Randomly select an ocean region with higher probability for water areas
   const oceanRegion = Math.random() * 100;
   
-  if (oceanRegion < 35) {
-    // Pacific Ocean region (larger probability due to size)
+  // Quadrant 1 bias: 60% chance of placing dots in quadrant 1 (positive longitude, positive latitude)
+  if (oceanRegion < 60) {
+    // Quadrant 1: Pacific/Indian Ocean (positive longitude, positive latitude)
+    return {
+      longitude: 70 + Math.random() * 110, // 70 to 180
+      latitude: 5 + Math.random() * 40 // 5 to 45 (keeping away from land masses)
+    };
+  } else if (oceanRegion < 75) {
+    // Pacific Ocean region (negative longitude)
     return {
       longitude: -180 + Math.random() * 80,
-      latitude: -40 + Math.random() * 80
+      latitude: -30 + Math.random() * 60
     };
-  } else if (oceanRegion < 60) {
+  } else if (oceanRegion < 90) {
     // Atlantic Ocean region
     return {
       longitude: -70 + Math.random() * 60,
-      latitude: -40 + Math.random() * 80
+      latitude: -30 + Math.random() * 60
     };
-  } else if (oceanRegion < 80) {
+  } else {
     // Indian Ocean region
     return {
       longitude: 50 + Math.random() * 50,
-      latitude: -40 + Math.random() * 80
-    };
-  } else {
-    // Southern Ocean / Antarctic region
-    return {
-      longitude: Math.random() * 360 - 180,
-      latitude: -60 - Math.random() * 30
+      latitude: -30 + Math.random() * 50
     };
   }
 };
