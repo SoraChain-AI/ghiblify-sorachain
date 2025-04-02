@@ -44,9 +44,6 @@ const GlobeNodeDot = ({
   // Get time since last contribution
   const timeSince = Math.max(0, new Date().getTime() - new Date(node.lastContribution).getTime());
   const isRecent = timeSince < 60000; // Within the last minute
-
-  // Extra rotation effect for nodes
-  const rotationOffset = rotating ? `translateX(${Math.sin(Date.now() / 3000) * 5}px)` : '';
   
   return (
     <TooltipProvider>
@@ -66,7 +63,7 @@ const GlobeNodeDot = ({
               boxShadow: isActive ? 
                 '0 0 0 4px rgba(94, 158, 143, 0.3), 0 0 20px rgba(94, 158, 143, 0.8)' : 
                 '0 0 10px rgba(94, 158, 143, 0.9), 0 0 15px rgba(166, 217, 199, 0.5) inset',
-              transform: `${isActive ? 'scale(1.5)' : 'scale(1)'} ${rotating ? rotationOffset : ''}`,
+              transform: isActive ? 'scale(1.5)' : 'scale(1)',
               zIndex: isActive ? 20 : 10,
               transition: 'all 0.3s ease-in-out',
               pointerEvents: 'all',
