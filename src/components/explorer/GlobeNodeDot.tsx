@@ -38,7 +38,8 @@ const GlobeNodeDot = ({
   const y = ((90 - latitude) / 180) * 80 + 10;
 
   // Size based on improvement (made larger for better visibility)
-  const size = 8 + node.improvement * 15;
+  // Scale down a bit to avoid too large dots
+  const size = 8 + Math.min(node.improvement * 12, 10);
 
   // Get time since last contribution
   const timeSince = Math.max(0, new Date().getTime() - new Date(node.lastContribution).getTime());
