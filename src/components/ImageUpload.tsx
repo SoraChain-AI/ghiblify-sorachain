@@ -158,9 +158,9 @@ const ImageUpload = () => {
         </div>
         
         <div className="mt-6 flex flex-col items-center">
-          <div className="flex items-center mb-4 text-sm text-muted-foreground">
-            <Lock className="h-4 w-4 mr-1.5" />
-            <span>Your image never leaves your device — FL happens locally</span>
+          <div className="flex items-center mb-4 text-sm">
+            <Lock className="h-4 w-4 mr-1.5 text-ghibli-dark-purple" />
+            <span className="font-medium bg-gradient-to-r from-ghibli-dark-purple to-ghibli-dark-blue bg-clip-text text-transparent">Your image never leaves your device — FL happens locally</span>
           </div>
           
           <Button 
