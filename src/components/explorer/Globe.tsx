@@ -4,12 +4,14 @@ import { Info } from "lucide-react";
 import { ModelNode } from "@/lib/types";
 import GlobeNodeDot from "./GlobeNodeDot";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+
 interface GlobeProps {
   nodes: ModelNode[];
   activeNode: string | null;
   rotating: boolean;
   setRotating: (rotating: boolean) => void;
 }
+
 const Globe = ({
   nodes,
   activeNode,
@@ -18,13 +20,19 @@ const Globe = ({
 }: GlobeProps) => {
   // Use state to track if the main image failed to load
   const [imageError, setImageError] = useState(false);
+
   return <div className="space-y-3">
       <div className="relative w-full h-[400px] bg-ghibli-cream rounded-lg overflow-hidden border border-ghibli-brown border-opacity-20 p-2">
         {/* World Map representation */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative w-full h-full overflow-hidden" onClick={() => setRotating(!rotating)}>
             {/* World Map Image */}
-            {!imageError ? <img alt="World Map" className="w-full h-full object-cover" onError={() => setImageError(true)} src="https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/sign/ghibli/global-globalization-world-map-environmental-concservation-concept_53876-124164.avif?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJnaGlibGkvZ2xvYmFsLWdsb2JhbGl6YXRpb24td29ybGQtbWFwLWVudmlyb25tZW50YWwtY29uY3NlcnZhdGlvbi1jb25jZXB0XzUzODc2LTEyNDE2NC5hdmlmIiwiaWF0IjoxNzQzNTE2NDE4LCJleHAiOjE3NzUwNTI0MTh9.c_lgfipkrMGHMOtJB90zoqDC8knBR6OMM6cOQuooo8k" /> : <div className="w-full h-full flex items-center justify-center bg-blue-100">
+            {!imageError ? <img 
+              alt="World Map" 
+              className="w-full h-full object-cover" 
+              onError={() => setImageError(true)} 
+              src="https://oucabhirqtlnsamrkmdu.supabase.co/storage/v1/object/public/sample_images//global-globalization-world-map-environmental-concservation-concept_53876-124164.avif" 
+            /> : <div className="w-full h-full flex items-center justify-center bg-blue-100">
                 <p className="text-blue-600">World Map Image Failed to Load</p>
               </div>}
 
@@ -70,4 +78,5 @@ const Globe = ({
       </div>
     </div>;
 };
+
 export default Globe;
