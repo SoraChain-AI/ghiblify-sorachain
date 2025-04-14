@@ -40,8 +40,6 @@ export * from './slider';
 // Re-export with renamed component to avoid naming conflicts
 import { Toaster as SonnerToaster } from './sonner';
 export { SonnerToaster };
-// Export everything else from sonner except Toaster
-export * from './sonner';
 export * from './switch';
 export * from './table';
 export * from './tabs';
