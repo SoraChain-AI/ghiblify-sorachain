@@ -4,42 +4,38 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload, Image as ImageIcon, Lock } from "lucide-react";
 import SampleImages from "./SampleImages";
-
 const ImageUpload = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Keep existing handler functions but make them no-ops
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
-
   const handleDragLeave = () => {
     // No-op
   };
-
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // No-op
   };
-
   const handleUploadClick = () => {
     // No-op
   };
-
   const handleTransform = () => {
     if (!image && !preview) {
       toast({
         title: "No image selected",
         description: "Please select one of the sample images below.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -52,14 +48,14 @@ const ImageUpload = () => {
     // Navigate to the processing page
     navigate("/processing");
   };
-
   const handleSelectSampleImage = async (imageUrl: string) => {
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
       const fileName = imageUrl.split('/').pop() || 'sample-image.jpg';
-      const file = new File([blob], fileName, { type: blob.type });
-      
+      const file = new File([blob], fileName, {
+        type: blob.type
+      });
       setImage(file);
       setPreview(imageUrl);
     } catch (error) {
@@ -67,35 +63,29 @@ const ImageUpload = () => {
       toast({
         title: "Failed to use sample image",
         description: "Please try again or use another image",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
-  return (
-    <div className="w-full max-w-2xl">
+  return <div className="w-full max-w-2xl">
       <div className="ghibli-card p-6">
         <h2 className="text-2xl font-bold text-center mb-4">Upload Your Image</h2>
         
-        <div 
-          className={`
+        <div className={`
             border-2 border-dashed rounded-lg p-8
             border-ghibli-brown border-opacity-30
             bg-white bg-opacity-50
             flex flex-col items-center justify-center
             h-[300px] cursor-not-allowed
-          `}
-        >
+          `}>
           <div className="text-center opacity-70">
             <div className="mb-4">
               <div className="mx-auto w-16 h-16 rounded-full bg-ghibli-blue bg-opacity-50 flex items-center justify-center">
                 <ImageIcon className="h-8 w-8 text-ghibli-dark-blue" />
               </div>
             </div>
-            <h3 className="text-lg font-medium mb-1">Image upload is currently disabled</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Please select from the sample images below
-            </p>
+            <h3 className="text-lg font-medium mb-1">Upload Image</h3>
+            <p className="text-sm text-muted-foreground mb-4">Please select from the uploaded images below</p>
             <Button variant="outline" size="sm" className="rounded-full cursor-not-allowed opacity-50">
               <Upload className="h-4 w-4 mr-2" />
               Upload Disabled
@@ -109,12 +99,7 @@ const ImageUpload = () => {
             <span className="font-medium bg-gradient-to-r from-ghibli-dark-purple to-ghibli-dark-blue bg-clip-text text-transparent">Your image never leaves your device — FL happens locally</span>
           </div>
           
-          <Button 
-            onClick={handleTransform}
-            disabled={!image && !preview}
-            variant="ghibli"
-            className={`${(!image && !preview) ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
+          <Button onClick={handleTransform} disabled={!image && !preview} variant="ghibli" className={`${!image && !preview ? 'opacity-50 cursor-not-allowed' : ''}`}>
             Transform to Ghibli Style
           </Button>
         </div>
@@ -122,8 +107,6 @@ const ImageUpload = () => {
 
       {/* Sample images section */}
       <SampleImages onSelectImage={handleSelectSampleImage} />
-    </div>
-  );
+    </div>;
 };
-
 export default ImageUpload;
