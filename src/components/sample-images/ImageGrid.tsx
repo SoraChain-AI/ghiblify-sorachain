@@ -10,7 +10,7 @@ interface ImageGridProps {
   onSelectImage: (image: SampleImage) => void;
 }
 
-const ImageGrid = ({ images, selectedImageId, loading, onSelectImage }: ImageGridProps) => {
+const ImageGrid = ({ images, loading }: ImageGridProps) => {
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -26,12 +26,13 @@ const ImageGrid = ({ images, selectedImageId, loading, onSelectImage }: ImageGri
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
       {images.map((image) => (
-        <ImageItem
-          key={image.id}
-          image={image}
-          isSelected={selectedImageId === image.id}
-          onSelect={onSelectImage}
-        />
+        <div key={image.id} className="cursor-default">
+          <img 
+            src={image.url} 
+            alt={image.name} 
+            className="w-full h-full object-cover rounded-lg"
+          />
+        </div>
       ))}
     </div>
   );

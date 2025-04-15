@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -69,7 +68,7 @@ const ImageUpload = () => {
     if (!image && !preview) {
       toast({
         title: "No image selected",
-        description: "Please upload or select an image first.",
+        description: "Please upload an image first.",
         variant: "destructive",
       });
       return;
@@ -82,26 +81,6 @@ const ImageUpload = () => {
 
     // Navigate to the processing page
     navigate("/processing");
-  };
-
-  const handleSelectSampleImage = async (imageUrl: string) => {
-    // Fetch the image as a blob
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const fileName = imageUrl.split('/').pop() || 'sample-image.jpg';
-      const file = new File([blob], fileName, { type: blob.type });
-      
-      setImage(file);
-      setPreview(imageUrl);
-    } catch (error) {
-      console.error("Error fetching sample image:", error);
-      toast({
-        title: "Failed to use sample image",
-        description: "Please try again or upload your own image",
-        variant: "destructive",
-      });
-    }
   };
 
   return (
@@ -174,8 +153,8 @@ const ImageUpload = () => {
         </div>
       </div>
 
-      {/* Sample images section */}
-      <SampleImages onSelectImage={handleSelectSampleImage} />
+      {/* Remove sample images selection */}
+      {/* <SampleImages onSelectImage={handleSelectSampleImage} /> */}
     </div>
   );
 };
