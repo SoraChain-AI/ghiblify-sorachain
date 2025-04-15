@@ -68,5 +68,5 @@ jobs:
         with:
           app-name: 'ghiblify'
           slot-name: 'Production'
-          package: .
+          package: dist
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_29BED1FB79B64F16A80950EB6874A603 }}
