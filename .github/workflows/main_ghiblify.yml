@@ -1,3 +1,4 @@
+
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
@@ -41,7 +42,6 @@ jobs:
           cd dist
           zip -r ../release.zip .
           cd ..
-
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
