@@ -1,10 +1,40 @@
 
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import LoginForm from "@/components/LoginForm";
 import { Cloud, Image, Brain, ShieldCheck } from "lucide-react";
 
 const Index = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay to show the loading animation briefly
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ghibli-cream paper-texture flex flex-col items-center justify-center">
+        <img 
+          src="/lovable-uploads/cbb2f12d-7a3e-43f0-a48c-f144b7792ce5.png" 
+          alt="Ghiblify Logo" 
+          className="w-24 h-24 animate-bounce mb-4" 
+        />
+        <div className="text-xl font-medium text-ghibli-dark-green">Loading Ghiblify...</div>
+        <div className="mt-8 flex space-x-2">
+          <div className="w-3 h-3 bg-ghibli-purple rounded-full animate-pulse"></div>
+          <div className="w-3 h-3 bg-ghibli-blue rounded-full animate-pulse delay-150"></div>
+          <div className="w-3 h-3 bg-ghibli-green rounded-full animate-pulse delay-300"></div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-ghibli-cream paper-texture flex flex-col">
       <div className="flex-grow container mx-auto px-4 py-16 md:py-24">
