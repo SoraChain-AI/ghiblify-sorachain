@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import LoginForm from "@/components/LoginForm";
 import { Cloud, Image, Brain, ShieldCheck } from "lucide-react";
+import ComputeProviders from "@/components/ComputeProviders";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -70,6 +71,8 @@ const Index = () => {
                   Explore AI Model
                 </Link>
               </Button>
+              
+              <ComputeProviders />
             </div>
 
             {/* Features */}
