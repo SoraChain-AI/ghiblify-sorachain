@@ -58,15 +58,15 @@ const Index = () => {
               Experience the wonder of Studio Ghibli-style art while helping train AI through private, on-device <span className="font-bold text-[#6B46C1]">federated learning</span>.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mb-8">
-              <Button asChild className="ghibli-button">
+            <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 mb-8">
+              <Button asChild className="ghibli-button w-full sm:w-auto">
                 <Link to="/upload">
                   <Image className="h-5 w-5 mr-2" />
                   Transform Image
                 </Link>
               </Button>
               
-              <Button asChild variant="outline" className="border-ghibli-brown border-opacity-20">
+              <Button asChild variant="outline" className="border-ghibli-brown border-opacity-20 w-full sm:w-auto">
                 <Link to="/explorer">
                   Explore AI Model
                 </Link>

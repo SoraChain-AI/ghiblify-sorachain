@@ -54,7 +54,7 @@ const ComputeProviders = () => {
     : computeProviders.filter(provider => provider.type === selectedType);
   
   return (
-    <div className="mt-6">
+    <div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="ghibli-button-secondary">
