@@ -23,9 +23,9 @@ const Header = () => {
         </Link>
         
         <nav className="hidden md:flex space-x-1">
-          <NavLink to="/upload" isActive={isActive("/upload")}>
-            <Upload className="h-4 w-4 mr-1" />
-            Upload
+          <NavLink to="/dashboard" isActive={isActive("/dashboard")}>
+            <Layers className="h-4 w-4 mr-1" />
+            Dashboard
           </NavLink>
           
           <NavLink to="/explorer" isActive={isActive("/explorer")}>
@@ -33,13 +33,13 @@ const Header = () => {
             Explorer
           </NavLink>
           
-          <NavLink to="/dashboard" isActive={isActive("/dashboard")}>
-            <Layers className="h-4 w-4 mr-1" />
-            Dashboard
+          <NavLink to="/upload" isActive={isActive("/upload")}>
+            <Upload className="h-4 w-4 mr-1" />
+            Upload
           </NavLink>
           
           <div className="px-4 py-2 rounded-full flex items-center text-sm font-medium">
-            <ComputeProviders />
+            <ComputeProviders variant="icon" />
           </div>
         </nav>
         
