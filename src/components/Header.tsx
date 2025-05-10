@@ -1,8 +1,9 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Cloud, Upload, BarChart4, Layers, User } from "lucide-react";
+import { Cloud, Upload, BarChart4, Layers, User, ServerCog } from "lucide-react";
 import { cn } from '@/lib/utils';
+import ComputeProviders from './ComputeProviders';
 
 const Header = () => {
   const location = useLocation();
@@ -36,6 +37,10 @@ const Header = () => {
             <Layers className="h-4 w-4 mr-1" />
             Dashboard
           </NavLink>
+          
+          <div className="px-4 py-2 rounded-full flex items-center text-sm font-medium">
+            <ComputeProviders />
+          </div>
         </nav>
         
         <div className="flex items-center space-x-2">

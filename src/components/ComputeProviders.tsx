@@ -44,7 +44,12 @@ const computeProviders = [
   }
 ];
 
-const ComputeProviders = () => {
+interface ComputeProvidersProps {
+  variant?: 'button' | 'icon';
+  className?: string;
+}
+
+const ComputeProviders = ({ variant = 'button', className }: ComputeProvidersProps) => {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [open, setOpen] = useState(false);
   
@@ -54,13 +59,20 @@ const ComputeProviders = () => {
     : computeProviders.filter(provider => provider.type === selectedType);
   
   return (
-    <div>
+    <div className={className}>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button className="ghibli-button-secondary">
-            <ServerCog className="h-5 w-5 mr-2" />
-            Connect Compute
-          </Button>
+          {variant === 'button' ? (
+            <Button className="ghibli-button-secondary">
+              <ServerCog className="h-5 w-5 mr-2" />
+              Connect Compute
+            </Button>
+          ) : (
+            <div className="flex items-center">
+              <ServerCog className="h-4 w-4 mr-1" />
+              Compute
+            </div>
+          )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-md ghibli-card">
           <DialogHeader>
