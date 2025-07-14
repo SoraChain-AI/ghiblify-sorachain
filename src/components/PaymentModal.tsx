@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useAccount, useBalance, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
@@ -66,25 +66,29 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, itemName }: PaymentMo
   };
 
   // Handle successful transaction
-  if (isConfirmed) {
-    toast({
-      title: "Payment successful!",
-      description: "Your payment has been confirmed. Processing your image...",
-    });
-    setIsProcessing(false);
-    onSuccess();
-    return null;
-  }
+  useEffect(() => {
+    if (isConfirmed) {
+      toast({
+        title: "Payment successful!",
+        description: "Your payment has been confirmed. Processing your image...",
+      });
+      setIsProcessing(false);
+      onSuccess();
+      onClose();
+    }
+  }, [isConfirmed, toast, onSuccess, onClose]);
 
   // Handle transaction error
-  if (error) {
-    toast({
-      title: "Transaction failed",
-      description: error.message,
-      variant: "destructive",
-    });
-    setIsProcessing(false);
-  }
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Transaction failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
+  }, [error, toast]);
 
   const isLoading = isPending || isConfirming || isProcessing;
   const hasInsufficientBalance = balance ? parseFloat(balance.formatted) < parseFloat(PAYMENT_CONFIG.processingPrice) : true;
