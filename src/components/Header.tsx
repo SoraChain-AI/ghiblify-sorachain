@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Cloud, Upload, BarChart4, Layers, User, ServerCog } from "lucide-react";
 import { cn } from '@/lib/utils';
 import ComputeProviders from './ComputeProviders';
+import { WalletStatus } from './WalletStatus';
 
 const Header = () => {
   const location = useLocation();
@@ -44,6 +45,7 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center space-x-2">
+          <WalletStatus />
           <Button variant="outline" size="sm" className="hidden sm:flex items-center gap-1.5">
             <span className="text-ghibli-purple font-medium">200 ST</span>
           </Button>

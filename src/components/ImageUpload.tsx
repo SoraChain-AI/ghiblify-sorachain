@@ -3,15 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload, Image as ImageIcon, Lock } from "lucide-react";
+import { useAccount } from 'wagmi';
 import SampleImages from "./SampleImages";
+import { PaymentModal } from "./PaymentModal";
 
 const ImageUpload = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isConnected } = useAccount();
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -38,14 +42,32 @@ const ImageUpload = () => {
       return;
     }
 
+    if (!isConnected) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet first to proceed with payment.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Show payment modal
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSuccess = () => {
     // Store the selected image URL in localStorage
     if (preview) {
       localStorage.setItem("originalImageUrl", preview);
     }
 
+    // Close payment modal
+    setShowPaymentModal(false);
+
     // Navigate to the processing page
     navigate("/processing");
   };
+
   const handleSelectSampleImage = async (imageUrl: string) => {
     try {
       const response = await fetch(imageUrl);
@@ -118,13 +140,21 @@ const ImageUpload = () => {
             variant="ghibli" 
             className={`${!image && !preview ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Transform to Ghibli Style
+            Transform to Ghibli Style (0.001 ETH)
           </Button>
         </div>
       </div>
 
       {/* Sample images section */}
       <SampleImages onSelectImage={handleSelectSampleImage} />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={handlePaymentSuccess}
+        itemName={image?.name || "Selected Image"}
+      />
     </div>
   );
 };
