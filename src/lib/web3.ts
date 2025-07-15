@@ -16,7 +16,7 @@ export const PAYMENT_CONFIG = {
   // Price in ETH for image processing
   processingPrice: '0.001', // 0.001 ETH (~$2-3 depending on ETH price)
   // Recipient address (you should replace this with your actual address)
-  recipientAddress: '0x742d35Cc6235A4E8dA9e6B1c7c8c5F5d8f1A12345' as `0x${string}`,
+  recipientAddress: '0x742d35Cc6Af62f44150A6b2199E4A96F138CE508' as `0x${string}`,
 };
 
 export const formatAddress = (address: string): string => {
