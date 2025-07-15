@@ -53,12 +53,13 @@ export const PaymentModal = ({ isOpen, onClose, onSuccess, itemName }: PaymentMo
       sendTransaction({
         to: PAYMENT_CONFIG.recipientAddress,
         value: parseEther(PAYMENT_CONFIG.processingPrice),
+        gas: BigInt(21000), // Standard gas limit for ETH transfer
       });
     } catch (err) {
       console.error('Payment error:', err);
       toast({
         title: "Payment failed",
-        description: "There was an error processing your payment.",
+        description: "There was an error processing your payment. Make sure you have enough Sepolia ETH for gas fees.",
         variant: "destructive",
       });
       setIsProcessing(false);
