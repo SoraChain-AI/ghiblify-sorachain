@@ -4,7 +4,7 @@ import { http } from 'viem';
 
 export const config = getDefaultConfig({
   appName: 'Ghiblify',
-  projectId: 'ghiblify-web3-project', // Replace with your WalletConnect project ID
+  projectId: '2f05a7cac391c26cf0af2c5062d275ad', // Valid WalletConnect project ID
   chains: [sepolia],
   transports: {
     [sepolia.id]: http('https://eth-sepolia.g.alchemy.com/v2/DuwwDL0xnS4LpRDu67IMKlkjkixYcsE5'),
