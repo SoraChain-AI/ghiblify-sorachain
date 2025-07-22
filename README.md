@@ -1,45 +1,56 @@
+🌸 Ghiblify – Turn Your World into a Ghibli Dream
 
-# Ghiblify
+Brought to life by SoraChain AI - PoC for Personalized Intelligence
 
-Transform your photos into Ghibli-style art.
 
-## Project Description
+Upload your photo → Get it transformed into a Studio Ghibli-style artwork → All done locally, privately, and ethically with AI.
 
-Ghiblify is a web application that uses AI to transform regular photos into art that resembles the iconic Studio Ghibli style. Upload your images and see them transformed into beautiful Ghibli-inspired artwork.
+⸻
 
-## Technologies Used
+🧠 What is Ghiblify?
 
-This project is built with:
+Ghiblify is a AI experience that transforms your real-world images into whimsical, dreamlike Ghibli-style artwork — all while protecting your privacy and empowering artists.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+This is not just another AI image filter. Ghiblify runs on Federated Learning powered by Blockchain, ensuring that:
+	•	Your data stays yours
+	•	Artists are credited and incentivized
+	•	Every transformation contributes to a better, decentralized AI model
 
-## Local Development
+Explore the live demo: ghiblify.sorachain.ai
 
-To run this project locally:
+⸻
 
-```sh
-# Step 1: Clone the repository
-git clone <YOUR_GIT_URL>
+🌍 Why Ghiblify?
 
-# Step 2: Navigate to the project directory
-cd ghiblify
+Ghiblify is different. It’s built on SoraChain AI, a decentralized infrastructure for training AI collaboratively and transparently. Ghiblify is our flagship proof of concept.
 
-# Step 3: Install the necessary dependencies
-npm i
+It shows how:
+	•	Artists can retain ownership of their styles
+	•	Users can convert personal photos without data leaving their device
+	•	Communities can train AI models together and get rewarded
 
-# Step 4: Start the development server
-npm run dev
-```
+⸻
 
-## Deployment
+🛠️ How It Works
+	1.	User Uploads Image
+	•	Image stays local or is temporarily processed in a privacy-preserving way
+	2.	Model Transformation
+	•	AI model converts your photo into a Ghibli-style painting
+	3.	Federated Learning
+	•	If opted-in, anonymized training data improves the model across all users
+	4.	Blockchain Layer
+	•	Tracks provenance, credits artists, logs model updates
 
-The application is deployed to Azure Static Web Apps and can be accessed at https://ghiblify.sorachain.ai
+⸻
 
-## Custom Domain
+🚀 Live Demo
 
-To connect a custom domain to this project, navigate to your hosting provider settings and point your domain to the Azure static web app.
+Try it now 👉 https://ghiblify.sorachain.ai
 
+⸻
+
+📦 Tech Stack
+	•	Frontend: React + TailwindCSS
+	•	Backend: Python + FastAPI
+	•	Federated Learning Engine: PySyft / Flower (local mode for now)
+	•	Blockchain Layer: Ethereum Testnet + Custom Smart Contracts
